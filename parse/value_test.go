@@ -25,3 +25,23 @@ func TestValue(t *testing.T) {
 	}
 
 }
+
+func TestValueEqual(t *testing.T) {
+	is := is.New(t)
+
+	v := ParseValue([]byte("something"))
+	is.True(v.Equal("something"))
+	is.False(v.Equal("else"))
+
+	v = ParseValue([]byte("/^2.{2}$/"))
+	is.True(v.Equal(200))
+	is.True(v.Equal(201))
+	is.False(v.Equal(404))
+
+	v = ParseValue([]byte("/application/json/"))
+	is.True(v.Equal("application/json"))
+	is.True(v.Equal("application/json; charset=utf-8"))
+	is.True(v.Equal("text/xml; application/json; charset=utf-8"))
+	is.False(v.Equal("text/xml; charset=utf-8"))
+
+}
