@@ -1,2 +1,138 @@
 # silk
+
 Markdown based document-driven web API testing.
+
+  * Write [nice looking Markdown documentation](https://github.com/matryer/silk/blob/master/testfiles/success/example.silk.md), and then run it using the [silk command](#command-line)
+  * Simple and robust [Markdown API](#markdown-api)
+  * Comes with [real examples](https://github.com/matryer/silk/tree/master/testfiles/success) that you can copy (that are also part of the test suite for the project)
+
+![Example Silk test file](https://github.com/matryer/silk/blob/master/other/example.png)
+
+## Markdown API
+
+Tests are made up of documents written in Markdown.
+
+  * `# Group` - Top level headings represent groups of requests
+  * `## GET /path` -  Second level headings represent a request
+  * ` ``` ` - Code blocks represent bodies
+  * `* ` - Lists describe headers and assertions
+  * `===` seperators break requests from responses
+  * Plain text is ignored to allow you to add documentation
+  
+### Document structure
+
+A document is made up of:
+
+  * A request
+  * `===` seperator
+  * Assertions
+
+### Requests
+
+A request starts with `##` and must have an HTTP method, and a path:
+
+```
+## METHOD /path
+```
+
+Examples include:
+
+```
+## GET /people
+
+## POST /people/1/comments
+
+## DELETE /people/1/comments/2
+
+```
+
+#### Request body (optional)
+
+To specify a request body (for example for `POST` requests) use a codeblock using backtics (` ``` `):
+
+    ```
+    {"name": "Silk", "release_year": 2016}
+    ```
+
+#### Request headers (optional)
+
+You may specify request headers using lists (prefixed with `*`):
+
+```
+  * Content-Type: "application/json"
+  * X-Custom-Header: "123"
+```
+
+### Assertions
+
+Following the `===` separator, you can specify assertions about the response. At a minimum, it is recommended that you assert the status code to ensure the request succeeded:
+
+```
+  * Status: 200
+```
+
+You may also specify response headers in the same format as request headers:
+
+```
+  * Content-Type: "application/json"
+  * X-MyServer-Version: "v1.0"
+```
+
+If any of the headers do not match, the test will fail.
+
+#### Validating data
+
+You can optionally include a verbatim body using ` ``` ` code blocks. If the response body does not exactly match, the test will fail.
+
+Alternatively, you can specify a list (using `*`) of data fields to assert accessible via the `Data` object:
+
+```
+  * Status: 201
+  * Content-Type: "application/json"
+  * Data.name: "Silk"
+  * Data.release_year: 2016
+  * Data.tags[0]: "testing"
+  * Data.tags[1]: "markdown"
+```
+
+  * NOTE: Currenly this feature is only supported for JSON APIs.
+
+## Command line
+
+The `silk` command runs tests against an HTTP endpoint.
+
+Usage:
+
+```
+silk -url="{endpoint}" {testfiles}
+```
+
+  * `{url}` the endpoint URL (e.g. `http://localhost:8080`)
+  * `{testfiles}` path to test files (e.g. `./testfiles`)
+
+Notes:
+
+  * Omit trailing slash from `url`
+  * `{testfiles}` can include a pattern (e.g. `/path/*.silk.md`)
+
+## Golang
+
+Silk is written in Go and integrates seamlessly into existing testing tools and frameworks. Import the `runner` package and use `RunGlob` to match many test files:
+
+```
+package project_test
+
+import (
+  "testing"
+  "github.com/matryer/silk/runner"
+)
+
+func TestAPIEndpoint(t *testing.T) {
+  // start a server
+  s := httptest.NewServer(yourHandler)
+  defer s.Close()
+  
+  // run all test files
+  runner.New(t, s.URL).RunGlob(filepath.Glob("../testfiles/failure/*.silk.md"))
+}
+```
