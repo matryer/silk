@@ -136,3 +136,5 @@ func TestAPIEndpoint(t *testing.T) {
   runner.New(t, s.URL).RunGlob(filepath.Glob("../testfiles/failure/*.silk.md"))
 }
 ```
+
+  * See the [documentation for the silk/runner package](https://godoc.org/github.com/matryer/silk/runner)
