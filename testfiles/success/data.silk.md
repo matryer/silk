@@ -11,6 +11,8 @@
 
 ===
 
+### Response
+
 * `Server`: `"EchoDataHandler"`
 * `Status`: `200`
 * `Data.body.name`: `"Silk"`
