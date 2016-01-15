@@ -11,10 +11,10 @@
 
 ===
 
-* `Server`: "EchoDataHandler"
-* `Status`: 200
-* `Data.body.name`: "Silk"
-* `Data.body.status`: "awesome"
-* `Data.body.a_bool`: true
-* `Data.body.nothing`: null
-* `Data.body.release_year`: 2016
+* `Server`: `"EchoDataHandler"`
+* `Status`: `200`
+* `Data.body.name`: `"Silk"`
+* `Data.body.status`: `"awesome"`
+* `Data.body.a_bool`: `true`
+* `Data.body.nothing`: `null`
+* `Data.body.release_year`: `2016`
