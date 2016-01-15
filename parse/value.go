@@ -30,15 +30,18 @@ func (v Value) String() string {
 // Supports regexp values.
 func (v Value) Equal(val interface{}) bool {
 	// check to see if this is regex
-	if str, ok := v.Data.(string); ok {
-		if strings.HasPrefix(str, "/") && strings.HasSuffix(str, "/") {
-			// looks like regexp to me
-			regex := regexp.MustCompile(str[1 : len(str)-1])
-			// turn the value into a string
-			valStr := fmt.Sprintf("%v", val)
-			if regex.Match([]byte(valStr)) {
-				return true
-			}
+	var str string
+	var ok bool
+	if str, ok = v.Data.(string); !ok {
+		return v.Data == val
+	}
+	if strings.HasPrefix(str, "/") && strings.HasSuffix(str, "/") {
+		// looks like regexp to me
+		regex := regexp.MustCompile(str[1 : len(str)-1])
+		// turn the value into a string
+		valStr := fmt.Sprintf("%v", val)
+		if regex.Match([]byte(valStr)) {
+			return true
 		}
 	}
 	return v.Data == val
