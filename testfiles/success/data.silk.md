@@ -2,8 +2,8 @@
 
 ## GET /echo
 
-* Content-Type: "application/json"
-* X-Another-Header: "value"
+* `Content-Type`: `"application/json"`
+* `X-Another-Header`: `"value"`
 
 ```
 {"name":"Silk","status":"awesome","a_bool":true,"nothing":null,"release_year":2016}
