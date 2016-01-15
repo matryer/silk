@@ -2,7 +2,7 @@
 
 * Root: "http://localhost:8080/"
 
-## POST /comments
+## `POST /comments`
 
 Create a comment.
 
@@ -15,13 +15,13 @@ Create a comment.
 }
 ```
 
-* Content-Type: "application/json"
+* `Content-Type`: "application/json"
 
 ===
 
 ### Example response
 
-* Status: 201
+* `Status`: `201`
 
 ```
 {
@@ -31,14 +31,14 @@ Create a comment.
 }
 ```
 
-## GET /comments/{id}
+## `GET` `/comments/{id}`
 
 Read a single comment with the specified `{id}`.
 
 ===
 
-* Status: 200
-* Content-Type: "application/json"
+* `Status`: `200`
+* `Content-Type`: `"application/json"`
 
 ```
 {
@@ -54,4 +54,4 @@ Read a single comment with the specified `{id}`.
 
 ===
 
-* Status: 200
+* `Status`: `200`

@@ -1,7 +1,6 @@
 package parse
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"regexp"
@@ -49,7 +48,7 @@ func (v Value) Equal(val interface{}) bool {
 
 func ParseValue(src []byte) *Value {
 	var v interface{}
-	src = bytes.TrimSpace(src)
+	src = clean(src)
 	if err := json.Unmarshal(src, &v); err != nil {
 		return &Value{Data: string(src)}
 	}

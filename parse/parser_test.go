@@ -27,8 +27,8 @@ func TestParser(t *testing.T) {
 	is.Equal(group.Details[0].Detail().Value.Data, "http://localhost:8080/")
 
 	req1 := group.Requests[0]
-	is.Equal("POST", req1.Method)
-	is.Equal("/comments", req1.Path)
+	is.Equal("POST", string(req1.Method))
+	is.Equal("/comments", string(req1.Path))
 	is.Equal(len(req1.Details), 1)
 	is.Equal(req1.Details[0].Detail().Key, "Content-Type")
 	is.Equal(req1.Details[0].Detail().Value.Data, "application/json")
