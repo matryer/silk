@@ -1,11 +1,11 @@
 # Comments
 
-## POST /comments
+## `POST /comments`
 
 Create a new comment.
 
-* Content-Type: "application/json"
-* Accept: "application/json"
+* `Content-Type`: `"application/json"`
+* `Accept`: `"application/json"`
 
 Include the `name` and `comment` text in the body:
 
@@ -20,8 +20,8 @@ Include the `name` and `comment` text in the body:
 
 ### Example response
 
-* Status: 201
-* Content-Type: "application/json"
+* `Status`: `201`
+* `Content-Type`: `"application/json"`
 
 ```
 {
