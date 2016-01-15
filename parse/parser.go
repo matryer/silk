@@ -194,5 +194,5 @@ func getok(src [][]byte, i int) ([]byte, error) {
 	if i+1 > len(src) {
 		return nil, fmt.Errorf("bad format: expected at least %d regex matches, but was %d: %s", i+1, len(src), string(bytes.Join(src, []byte("\n"))))
 	}
-	return src[i], nil
+	return clean(src[i]), nil
 }

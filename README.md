@@ -82,7 +82,11 @@ If any of the headers do not match, the test will fail.
 
 #### Validating data
 
-You can optionally include a verbatim body using ` ``` ` code blocks. If the response body does not exactly match, the test will fail.
+You can optionally include a verbatim body using ` ``` ` code blocks. If the response body does not exactly match, the test will fail:
+
+    ```
+    {"id": 1, "name": "Silk", "release_year": 2016}
+    ```
 
 Alternatively, you can specify a list (using `*`) of data fields to assert accessible via the `Data` object:
 
@@ -96,6 +100,20 @@ Alternatively, you can specify a list (using `*`) of data fields to assert acces
 ```
 
   * NOTE: Currenly this feature is only supported for JSON APIs.
+
+#### Regex
+
+Values may be regex, if they being and end with a forward slash: `/`. The assertion will pass if the value (after being turned into a string) matches the regex.
+
+```
+  * Status: /^2.{2}$/
+  * Content-Type: /application/json/
+```
+
+The above will assert that:
+
+  * The status beings with 200, and
+  * The Content-Type contains `application/json`
 
 ## Command line
 

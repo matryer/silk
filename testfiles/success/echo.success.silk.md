@@ -1,9 +1,9 @@
 # Echo server
 
-## GET /echo
+## `GET /echo`
 
-* Content-Type: "text/plain"
-* X-Another-Header: "value"
+* `Content-Type`: `"text/plain"`
+* `X-Another-Header`: `"value"`
 
 ```
 Hello silk.

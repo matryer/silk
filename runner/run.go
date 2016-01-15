@@ -248,7 +248,7 @@ func (r *Runner) assertData(data interface{}, errData error, key string, expecte
 	if !ok && expected.Data == nil {
 		return true
 	}
-	if actual != expected.Data {
+	if !expected.Equal(actual) {
 		actualVal := parse.ParseValue([]byte(fmt.Sprintf("%v", actual)))
 		r.log(key, fmt.Sprintf("expected %T: %s  actual %T: %s", expected.Data, expected, actual, actualVal))
 		return false

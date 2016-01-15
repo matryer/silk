@@ -100,7 +100,7 @@ func parseDetail(b []byte, detailregex *regexp.Regexp) (*Detail, error) {
 	if colon == -1 || colon > len(detail)-1 {
 		return nil, errors.New("malformed detail")
 	}
-	key := detail[0:colon]
+	key := clean(detail[0:colon])
 	return &Detail{
 		Key:   string(bytes.TrimSpace(key)),
 		Value: ParseValue(detail[colon+1:]),
@@ -113,6 +113,10 @@ func (d *Detail) String() string {
 		return d.Key + ": " + fmt.Sprint(d.Value)
 	}
 	return d.Key + ": " + string(valbytes)
+}
+
+func clean(b []byte) []byte {
+	return bytes.Trim(bytes.TrimSpace(b), "`")
 }
 
 // LineType represents the type of a line.
