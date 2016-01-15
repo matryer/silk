@@ -2,6 +2,7 @@ package parse
 
 import (
 	"bufio"
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -93,7 +94,7 @@ func Parse(filename string, r io.Reader) ([]*Group, error) {
 				}
 				groups = append(groups, currentGroup)
 			}
-			title, err := getok(line.Regexp.FindSubmatch(line.Bytes), 2)
+			title, err := getok(line.Regexp.FindSubmatch(line.Bytes), 1)
 			if err != nil {
 				return nil, &ErrLine{N: n, Err: err}
 			}
@@ -191,7 +192,7 @@ func scancodeblock(n int, scanner *bufio.Scanner) (int, Lines, error) {
 
 func getok(src [][]byte, i int) ([]byte, error) {
 	if i+1 > len(src) {
-		return nil, fmt.Errorf("bad format: expected at least %d regex matches, but was %d", i+1, len(src))
+		return nil, fmt.Errorf("bad format: expected at least %d regex matches, but was %d: %s", i+1, len(src), string(bytes.Join(src, []byte("\n"))))
 	}
 	return src[i], nil
 }

@@ -15,7 +15,6 @@ type Line struct {
 	Type   LineType
 	Bytes  []byte
 	Regexp *regexp.Regexp
-
 	detail *Detail
 }
 
@@ -153,7 +152,7 @@ var matchTypes = []struct {
 	Type: LineTypeRequest,
 }, {
 	// # Heading
-	R:    "^(#+) (.*)",
+	R:    "^# (.*)",
 	Type: LineTypeGroupHeading,
 }, {
 	// ```

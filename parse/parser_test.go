@@ -56,7 +56,7 @@ func TestParser(t *testing.T) {
   "name":    "Mat",
   "comment": "Good work"
 }`)
-	is.Equal(req2.ExpectedBody.Number(), 42)
+	is.Equal(req2.ExpectedBody.Number(), 44)
 
 	group = groups[1]
 	is.Equal(len(group.Requests), 1)

@@ -26,6 +26,9 @@ func TestNewLine(t *testing.T) {
 		Src:  "## POST /something",
 		Type: parse.LineTypeRequest,
 	}, {
+		Src:  "### Example request",
+		Type: parse.LineTypePlain,
+	}, {
 		Src:  "* Detail: 123",
 		Type: parse.LineTypeDetail,
 	}, {
