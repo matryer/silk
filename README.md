@@ -14,11 +14,12 @@ Tests are made up of documents written in Markdown.
 
   * `# Group` - Top level headings represent groups of requests
   * `## GET /path` -  Second level headings represent a request
-  * ` ``` ` - Code blocks represent bodies
+  * Code blocks with three back tics represent bodies
   * `* ` - Lists describe headers and assertions
   * `===` seperators break requests from responses
   * Plain text is ignored to allow you to add documentation
-  
+  * Inline back tics are ignored and are available for formatting
+
 ### Document structure
 
 A document is made up of:
