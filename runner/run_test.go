@@ -83,7 +83,7 @@ func TestFailureWrongBody(t *testing.T) {
 	is.True(strings.Contains(logstr, "GET /echo"))
 	is.True(strings.Contains(logstr, "Hello silk."))
 	is.True(strings.Contains(logstr, "--- FAIL: GET /echo"))
-	is.True(strings.Contains(logstr, "../testfiles/failure/echo.failure.wrongbody.silk.md:14 unexpected body"))
+	is.True(strings.Contains(logstr, "../testfiles/failure/echo.failure.wrongbody.silk.md:14 - body doesn't match"))
 }
 
 func TestFailureWrongHeader(t *testing.T) {
@@ -103,7 +103,7 @@ func TestFailureWrongHeader(t *testing.T) {
 	logstr := strings.Join(logs, "\n")
 	is.True(strings.Contains(logstr, `Content-Type expected string: "wrong/type"  actual string: "text/plain; charset=utf-8"`))
 	is.True(strings.Contains(logstr, "--- FAIL: GET /echo"))
-	is.True(strings.Contains(logstr, "../testfiles/failure/echo.failure.wrongheader.silk.md:22 unexpected Content-Type"))
+	is.True(strings.Contains(logstr, "../testfiles/failure/echo.failure.wrongheader.silk.md:22 - Content-Type doesn't match"))
 }
 
 func TestGlob(t *testing.T) {

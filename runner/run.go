@@ -173,7 +173,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	if len(req.ExpectedBody) > 0 {
 		// check body against expected body
 		if !r.assertBody(actualBody, req.ExpectedBody.Join()) {
-			r.fail(group, req, req.ExpectedBody.Number(), "unexpected body")
+			r.fail(group, req, req.ExpectedBody.Number(), "- body doesn't match")
 			return
 		}
 	}
@@ -190,7 +190,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 					data, errData = r.ParseBody(bytes.NewReader(actualBody))
 				})
 				if !r.assertData(data, errData, detail.Key, detail.Value) {
-					r.fail(group, req, line.Number, "unexpected "+detail.Key)
+					r.fail(group, req, line.Number, "- "+detail.Key+" doesn't match")
 					return
 				}
 				continue
@@ -199,11 +199,11 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 			var present bool
 			if actual, present = responseDetails[detail.Key]; !present {
 				r.log(detail.Key, fmt.Sprintf("expected %T: %s  actual %T: %s", detail.Value, detail, actual, "(missing)"))
-				r.fail(group, req, line.Number, "unexpected "+detail.Key)
+				r.fail(group, req, line.Number, "- "+detail.Key+" doesn't match")
 				return
 			}
 			if !r.assertDetail(detail.Key, actual, detail.Value) {
-				r.fail(group, req, line.Number, "unexpected "+detail.Key)
+				r.fail(group, req, line.Number, "- "+detail.Key+" doesn't match")
 				return
 			}
 		}
