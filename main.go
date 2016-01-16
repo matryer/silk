@@ -18,24 +18,26 @@ import (
 */
 
 var (
-	url  = flag.String("url", "", "target url")
-	help = flag.Bool("help", false, "show help")
-	root string
+	showVersion = flag.Bool("version", false, "show version and exit")
+	url         = flag.String("silk.url", "", "(required) target url")
+	help        = flag.Bool("help", false, "show help")
+	root        string
 )
 
 func main() {
 	flag.Parse()
 
+	if *showVersion {
+		fmt.Println("silk", version)
+		return
+	}
 	if *help {
-		fmt.Println(`usage:
-  silk [path/to/files/[pattern]]`)
-		flag.PrintDefaults()
-		fmt.Println()
-		fmt.Println(`By default silk will match *.silk.md files in the current directory.`)
+		printhelp()
 		return
 	}
 	if len(*url) == 0 {
-		fmt.Println("must provide -url")
+		fmt.Println("must provide -silk.url")
+		printhelp()
 		return
 	}
 
@@ -67,4 +69,12 @@ func all(t *testing.T) {
 	}
 	fmt.Println("running", len(files), "file(s)")
 	r.RunGlob(files, nil)
+}
+
+func printhelp() {
+	fmt.Println(`usage:
+  silk [path/to/files/[pattern]]`)
+	flag.PrintDefaults()
+	fmt.Println()
+	fmt.Println(`By default silk will run ./*.silk.md`)
 }
