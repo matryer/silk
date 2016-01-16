@@ -9,6 +9,10 @@ import (
 	"regexp"
 )
 
+var (
+	commentPrefix = []byte(` //`)
+)
+
 // Line represents a single line.
 type Line struct {
 	Number int
@@ -28,6 +32,10 @@ func NewLine(n int, text []byte) (*Line, error) {
 			rx = regexes[item.R]
 			break
 		}
+	}
+	// trim off comments
+	if bytes.Contains(text, commentPrefix) {
+		text = bytes.Split(text, commentPrefix)[0]
 	}
 	// parse the detail now
 	var d *Detail

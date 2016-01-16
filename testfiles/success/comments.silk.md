@@ -15,7 +15,7 @@ Create a comment.
 }
 ```
 
-* `Content-Type`: "application/json"
+* `Content-Type`: "application/json" // ensure correct content type is specified
 
 ===
 
@@ -54,4 +54,4 @@ Read a single comment with the specified `{id}`.
 
 ===
 
-* `Status`: `200`
+* `Status`: `200` // OK

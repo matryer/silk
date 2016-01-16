@@ -60,6 +60,19 @@ func TestNewLine(t *testing.T) {
 
 }
 
+func TestLineComments(t *testing.T) {
+	is := is.New(t)
+	l, err := parse.NewLine(0, []byte(`* Key: "Value" // comments should be ignored`))
+	is.NoErr(err)
+	detail := l.Detail()
+	is.Equal(detail.Key, "Key")
+	is.Equal(detail.Value.Data, "Value")
+
+	l, err = parse.NewLine(0, []byte(`* Key: "Value" // comments should be ignored`))
+	is.NoErr(err)
+	is.Equal(string(l.Bytes), `* Key: "Value"`)
+}
+
 func TestLineDetail(t *testing.T) {
 	is := is.New(t)
 	l, err := parse.NewLine(0, []byte(`* Key: "Value"`))
