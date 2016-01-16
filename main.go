@@ -26,9 +26,8 @@ var (
 
 func main() {
 	flag.Parse()
-
 	if *showVersion {
-		fmt.Println("silk", version)
+		printversion()
 		return
 	}
 	if *help {
@@ -40,7 +39,6 @@ func main() {
 		printhelp()
 		return
 	}
-
 	root = "."
 	args := flag.Args()
 	if len(args) > 0 {
@@ -56,12 +54,12 @@ func main() {
 		root = filepath.Join(root, "*.silk.md")
 	}
 	testing.Main(func(pat, str string) (bool, error) { return true, nil },
-		[]testing.InternalTest{{Name: "silk", F: all}},
+		[]testing.InternalTest{{Name: "silk", F: testFunc}},
 		nil,
 		nil)
 }
 
-func all(t *testing.T) {
+func testFunc(t *testing.T) {
 	r := runner.New(t, *url)
 	files, err := filepath.Glob(root)
 	if err != nil {
@@ -72,9 +70,14 @@ func all(t *testing.T) {
 }
 
 func printhelp() {
+	printversion()
 	fmt.Println(`usage:
   silk [path/to/files/[pattern]]`)
 	flag.PrintDefaults()
 	fmt.Println()
 	fmt.Println(`By default silk will run ./*.silk.md`)
+}
+
+func printversion() {
+	fmt.Println("silk", version)
 }
