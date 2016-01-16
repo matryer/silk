@@ -14,6 +14,7 @@ var (
 	errUnexpectedCodeblock = errors.New("unexpected codeblock")
 	errMissingEndCodeblock = errors.New("missing end codeblock")
 	errUnexpectedDetails   = errors.New("unexpected details")
+	errUnexpectedParams    = errors.New("unexpected params")
 	errMalformedDetail     = errors.New("malformed detail")
 )
 
@@ -28,6 +29,7 @@ type Request struct {
 	Path    []byte
 	Method  []byte
 	Details Lines
+	Params  Lines
 	Body    Lines
 
 	ExpectedBody    Lines
@@ -80,7 +82,7 @@ func Parse(filename string, r io.Reader) ([]*Group, error) {
 
 	for scanner.Scan() {
 		n++
-		line, err := NewLine(n, scanner.Bytes())
+		line, err := ParseLine(n, scanner.Bytes())
 		if err != nil {
 			return nil, err
 		}
@@ -139,22 +141,26 @@ func Parse(filename string, r io.Reader) ([]*Group, error) {
 			}
 
 		case LineTypeDetail:
-
 			if currentRequest == nil && currentGroup == nil {
 				return nil, &ErrLine{N: n, Err: errUnexpectedDetails}
 			}
-
 			if currentRequest == nil {
 				currentGroup.Details = append(currentGroup.Details, line)
 				continue
 			}
-
 			if settingExpectations {
 				currentRequest.ExpectedDetails = append(currentRequest.ExpectedDetails, line)
 			} else {
 				currentRequest.Details = append(currentRequest.Details, line)
-
 			}
+		case LineTypeParam:
+			if currentRequest == nil && currentGroup == nil {
+				return nil, &ErrLine{N: n, Err: errUnexpectedParams}
+			}
+			if settingExpectations {
+				return nil, &ErrLine{N: n, Err: errUnexpectedParams}
+			}
+			currentRequest.Params = append(currentRequest.Params, line)
 		case LineTypeSeparator:
 			settingExpectations = true
 		}
@@ -176,7 +182,7 @@ func scancodeblock(n int, scanner *bufio.Scanner) (int, Lines, error) {
 	var lines Lines
 	for scanner.Scan() {
 		n++
-		line, err := NewLine(n, scanner.Bytes())
+		line, err := ParseLine(n, scanner.Bytes())
 		if err != nil {
 			return n, nil, err
 		}

@@ -35,6 +35,8 @@ Create a comment.
 
 Read a single comment with the specified `{id}`.
 
+* `?pretty=true` // get pretty output
+
 ===
 
 * `Status`: `200`
