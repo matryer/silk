@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"sort"
 	"strconv"
 	"strings"
@@ -35,6 +36,8 @@ func handleEcho(w http.ResponseWriter, r *http.Request) {
 		log.Println("copying request into buffer failed:", err)
 	}
 	r.Header.Set("Content-Length", strconv.Itoa(bodybuf.Len()))
+	// write parameters
+	writeSortedQuery(w, r.URL.Query())
 	// write headers
 	writeSortedHeaders(w, r.Header)
 	// write body
@@ -60,6 +63,9 @@ func handleEchoData(w http.ResponseWriter, r *http.Request) {
 		for _, v := range r.Header[k] {
 			out[k] = v
 		}
+	}
+	for k, vs := range r.URL.Query() {
+		out[k] = vs
 	}
 	out["bodystr"] = bodybuf.String()
 	var bodyData interface{}
@@ -87,6 +93,25 @@ func writeSortedHeaders(w io.Writer, headers http.Header) {
 				continue
 			}
 			fmt.Fprintln(w, "* "+k+":", string(vb))
+		}
+	}
+}
+
+func writeSortedQuery(w io.Writer, query url.Values) {
+	// get header keys
+	var keys []string
+	for k := range query {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		var vals []string
+		for _, v := range query[k] {
+			vals = append(vals, v)
+		}
+		sort.Strings(vals)
+		for _, v := range vals {
+			fmt.Fprintln(w, "* ?"+k+"="+v)
 		}
 	}
 }

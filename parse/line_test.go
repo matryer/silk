@@ -7,7 +7,7 @@ import (
 	"github.com/matryer/silk/parse"
 )
 
-func TestNewLine(t *testing.T) {
+func TestParseLine(t *testing.T) {
 	is := is.New(t)
 
 	var tests = []struct {
@@ -32,6 +32,12 @@ func TestNewLine(t *testing.T) {
 		Src:  "* `Detail`: `123`",
 		Type: parse.LineTypeDetail,
 	}, {
+		Src:  "* `?param=value`",
+		Type: parse.LineTypeParam,
+	}, {
+		Src:  "* ?param=value",
+		Type: parse.LineTypeParam,
+	}, {
 		Src:  "===",
 		Type: parse.LineTypeSeparator,
 	}, {
@@ -51,7 +57,7 @@ func TestNewLine(t *testing.T) {
 		Type: parse.LineTypeSeparator,
 	}}
 	for i, test := range tests {
-		l, err := parse.NewLine(i, []byte(test.Src))
+		l, err := parse.ParseLine(i, []byte(test.Src))
 		is.NoErr(err)
 		is.Equal(l.Type, test.Type)
 		is.Equal(l.Bytes, []byte(test.Src))
@@ -62,20 +68,37 @@ func TestNewLine(t *testing.T) {
 
 func TestLineComments(t *testing.T) {
 	is := is.New(t)
-	l, err := parse.NewLine(0, []byte(`* Key: "Value" // comments should be ignored`))
+	l, err := parse.ParseLine(0, []byte(`* Key: "Value" // comments should be ignored`))
 	is.NoErr(err)
 	detail := l.Detail()
+	is.OK(detail)
 	is.Equal(detail.Key, "Key")
 	is.Equal(detail.Value.Data, "Value")
-
-	l, err = parse.NewLine(0, []byte(`* Key: "Value" // comments should be ignored`))
+	l, err = parse.ParseLine(0, []byte(`* Key: "Value" // comments should be ignored`))
 	is.NoErr(err)
 	is.Equal(string(l.Bytes), `* Key: "Value"`)
 }
 
+func TestLineParams(t *testing.T) {
+	is := is.New(t)
+	for i, line := range []string{
+		"* ?key=value",
+		"* `?key=value`",
+		"* ?`key`=`value`",
+	} {
+		l, err := parse.ParseLine(i, []byte(line))
+		is.NoErr(err)
+		is.Equal(l.Type, parse.LineTypeParam)
+		detail := l.Detail()
+		is.OK(detail)
+		is.Equal(detail.Key, "key")
+		is.Equal(detail.Value.Data, "value")
+	}
+}
+
 func TestLineDetail(t *testing.T) {
 	is := is.New(t)
-	l, err := parse.NewLine(0, []byte(`* Key: "Value"`))
+	l, err := parse.ParseLine(0, []byte(`* Key: "Value"`))
 	is.NoErr(err)
 	detail := l.Detail()
 	is.Equal(detail.Key, "Key")

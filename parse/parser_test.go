@@ -47,6 +47,9 @@ func TestParser(t *testing.T) {
 	req2 := group.Requests[1]
 	is.Equal("GET", req2.Method)
 	is.Equal("/comments/{id}", req2.Path)
+	is.Equal(len(req2.Params), 1)
+	is.Equal(req2.Params[0].Detail().Key, "pretty")
+	is.Equal(req2.Params[0].Detail().Value.Data, true)
 	is.Equal(req2.ExpectedDetails[0].Detail().Key, "Status")
 	is.Equal(req2.ExpectedDetails[0].Detail().Value.Data, 200)
 	is.Equal(req2.ExpectedDetails[1].Detail().Key, "Content-Type")
@@ -56,7 +59,7 @@ func TestParser(t *testing.T) {
   "name":    "Mat",
   "comment": "Good work"
 }`)
-	is.Equal(req2.ExpectedBody.Number(), 44)
+	is.Equal(req2.ExpectedBody.Number(), 46)
 
 	group = groups[1]
 	is.Equal(len(group.Requests), 1)

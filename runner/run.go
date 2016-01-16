@@ -123,16 +123,26 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 		r.t.FailNow()
 		return
 	}
-	// set request headers
+	// set body
 	bodyLen := len(req.Body.String())
 	httpReq.Header.Add("Content-Length", strconv.Itoa(bodyLen))
 	r.Verbose(indent, "Content-Length:", bodyLen)
+	// set request headers
 	for _, line := range req.Details {
 		detail := line.Detail()
 		r.Verbose(indent, detail.String())
 		httpReq.Header.Add(detail.Key, fmt.Sprintf("%v", detail.Value.Data))
 	}
+	// set parameters
+	q := httpReq.URL.Query()
+	for _, line := range req.Params {
+		detail := line.Detail()
+		r.Verbose(indent, detail.String())
+		q.Add(detail.Key, fmt.Sprintf("%v", detail.Value.Data))
+	}
+	httpReq.URL.RawQuery = q.Encode()
 
+	// perform request
 	httpRes, err := r.Client.Do(httpReq)
 	if err != nil {
 		r.log(err)

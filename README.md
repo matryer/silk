@@ -17,7 +17,8 @@ Tests are made up of documents written in Markdown.
   * `# Group` - Top level headings represent groups of requests
   * `## GET /path` -  Second level headings represent a request
   * Code blocks with three back tics represent bodies
-  * `*` - Lists describe headers and assertions
+  * `* Field: value` - Lists describe headers and assertions
+  * `* ?param=value` - Request parameters
   * `===` seperators break requests from responses
   * Comments (starting with `//`) are ignored
   * Plain text is ignored to allow you to add documentation
@@ -63,9 +64,19 @@ To specify a request body (for example for `POST` requests) use a codeblock usin
 You may specify request headers using lists (prefixed with `*`):
 
 ```
-  * Content-Type: "application/json"
-  * X-Custom-Header: "123"
+* Content-Type: "application/json"
+* X-Custom-Header: "123"
 ```
+
+#### Request parameters (optional)
+
+Adding parameters to the path (like `GET /path?q=something`) can be tricky, especially when you consider escaping etc. To address this, Silk supports parameters like lists:
+
+```
+* ?param=value
+```
+
+The parameters will be correctly added to the URL path before the request is made.
 
 ### Assertions
 

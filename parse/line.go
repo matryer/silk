@@ -22,9 +22,13 @@ type Line struct {
 	detail *Detail
 }
 
-// NewLine makes a new Line with the given data.
-func NewLine(n int, text []byte) (*Line, error) {
+// ParseLine makes a new Line with the given data.
+func ParseLine(n int, text []byte) (*Line, error) {
 	linetype := LineTypePlain
+	// trim off comments
+	if bytes.Contains(text, commentPrefix) {
+		text = bytes.Split(text, commentPrefix)[0]
+	}
 	var rx *regexp.Regexp
 	for _, item := range matchTypes {
 		if regexes[item.R].Match(text) {
@@ -33,13 +37,9 @@ func NewLine(n int, text []byte) (*Line, error) {
 			break
 		}
 	}
-	// trim off comments
-	if bytes.Contains(text, commentPrefix) {
-		text = bytes.Split(text, commentPrefix)[0]
-	}
 	// parse the detail now
 	var d *Detail
-	if linetype == LineTypeDetail {
+	if linetype == LineTypeDetail || linetype == LineTypeParam {
 		var err error
 		d, err = parseDetail(text, rx)
 		if err != nil {
@@ -104,14 +104,14 @@ func parseDetail(b []byte, detailregex *regexp.Regexp) (*Detail, error) {
 	if err != nil {
 		panic("silk: failed to parse detail: " + err.Error())
 	}
-	colon := bytes.Index(detail, []byte(":"))
-	if colon == -1 || colon > len(detail)-1 {
+	sep := bytes.IndexAny(detail, ":=")
+	if sep == -1 || sep > len(detail)-1 {
 		return nil, errors.New("malformed detail")
 	}
-	key := clean(detail[0:colon])
+	key := clean(detail[0:sep])
 	return &Detail{
 		Key:   string(bytes.TrimSpace(key)),
-		Value: ParseValue(detail[colon+1:]),
+		Value: ParseValue(detail[sep+1:]),
 	}, nil
 }
 
@@ -138,6 +138,7 @@ const (
 	LineTypeCodeBlock
 	LineTypeDetail
 	LineTypeSeparator
+	LineTypeParam
 )
 
 var lineTypeStrs = map[LineType]string{
@@ -147,6 +148,7 @@ var lineTypeStrs = map[LineType]string{
 	LineTypeCodeBlock:    "codeblock",
 	LineTypeDetail:       "detail",
 	LineTypeSeparator:    "separator",
+	LineTypeParam:        "param",
 }
 
 func (l LineType) String() string {
@@ -179,9 +181,9 @@ var matchTypes = []struct {
 	R:    "^(---+)",
 	Type: LineTypeSeparator,
 }, {
-	// - Content-Type: application/json
-	R:    "^- (.*)",
-	Type: LineTypeDetail,
+	// * ?param=value
+	R:    "^\\* `?\\?(.*=?.*)`?",
+	Type: LineTypeParam,
 }, {
 	// * Content-Type: application/json
 	R:    "^\\* (.*)",
