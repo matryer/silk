@@ -104,7 +104,7 @@ Alternatively, you can specify a list (using `*`) of data fields to assert acces
 
 #### Regex
 
-Values may be regex, if they being and end with a forward slash: `/`. The assertion will pass if the value (after being turned into a string) matches the regex.
+Values may be regex, if they begin and end with a forward slash: `/`. The assertion will pass if the value (after being turned into a string) matches the regex.
 
 ```
   * Status: /^2.{2}$/
