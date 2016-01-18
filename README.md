@@ -95,7 +95,7 @@ You may also specify response headers in the same format as request headers:
 
 If any of the headers do not match, the test will fail.
 
-#### Validating data
+#### Validating data
 
 You can optionally include a verbatim body using ` ``` ` code blocks. If the response body does not exactly match, the test will fail:
 
