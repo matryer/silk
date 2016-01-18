@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="/assets/js/jquery.min.js"></script>
+    {{template "head" .}}
+</head>
+
+<body id="page-top" class="index">
+    <!-- Header -->
+
+    {{template "header" .}}
+
+    <div class="container-fluid main">
+      <script type="text/javascript">
+
+      function renderFile(file){
+         $.ajax({
+           type: "GET",
+           url: '/files/' + file,
+           success: function(data) {
+                 // data is ur summary
+                $('#md').html(data);
+           }
+         });
+      }
+      </script>
+      <div class="row">
+        <div class="col-md-3 col-sm-3 col-xs-3">
+            <ul class="nav nav-stacked" id="sidebar">
+              {{ range $k, $v := .Files }}
+                <li>
+                  <a href="#{{ $k }}" onclick="renderFile({{ $k }});return false;">
+                  {{ $result := index $.Results $k }}
+                  {{ if $result.Fail }}
+                  <i class="fa fa-exclamation-circle failure"></i>
+                  {{ else }}
+                  <i class="fa fa-check-circle success"></i>
+                  {{ end }}
+                  {{ $k }}
+                  </a>
+                </li>
+              {{ end }}
+            </ul>
+        </div>
+
+        <div class="col-md-9 col-sm-9 col-xs-9">
+          <div id="md">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {{template "footer" .}}
+    {{template "script" .}}
+
+</body>
+</html>
