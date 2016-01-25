@@ -38,6 +38,8 @@ type Runner struct {
 	Log func(string)
 	// Verbose is the function that logs verbose debug information.
 	Verbose func(...interface{})
+	// NewRequest makes a new http.Request. By default, uses http.NewRequest.
+	NewRequest func(method, urlStr string, body io.Reader) (*http.Request, error)
 }
 
 // New makes a new Runner with the given testing T target and the
@@ -56,7 +58,8 @@ func New(t T, URL string) *Runner {
 			}
 			fmt.Println(args...)
 		},
-		ParseBody: ParseJSONBody,
+		ParseBody:  ParseJSONBody,
+		NewRequest: http.NewRequest,
 	}
 }
 
@@ -117,7 +120,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	r.Verbose(string(req.Method), absPath)
 
 	// make request
-	httpReq, err := http.NewRequest(m, absPath, body)
+	httpReq, err := r.NewRequest(m, absPath, body)
 	if err != nil {
 		r.log("invalid request: ", err)
 		r.t.FailNow()
