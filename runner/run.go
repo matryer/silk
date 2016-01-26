@@ -29,8 +29,9 @@ type T interface {
 type Runner struct {
 	t       T
 	rootURL string
-	// Client is the http.Client to use when making requests.
-	Client *http.Client
+	// RoundTripper is the transport to use when making requests.
+	// By default it is http.DefaultTransport.
+	RoundTripper http.RoundTripper
 	// ParseBody is the function to use to attempt to parse
 	// response bodies to make data avaialble for assertions.
 	ParseBody func(r io.Reader) (interface{}, error)
@@ -46,9 +47,9 @@ type Runner struct {
 // root URL.
 func New(t T, URL string) *Runner {
 	return &Runner{
-		t:       t,
-		rootURL: URL,
-		Client:  http.DefaultClient,
+		t:            t,
+		rootURL:      URL,
+		RoundTripper: http.DefaultTransport,
 		Log: func(s string) {
 			fmt.Println(s)
 		},
@@ -146,7 +147,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	httpReq.URL.RawQuery = q.Encode()
 
 	// perform request
-	httpRes, err := r.Client.Do(httpReq)
+	httpRes, err := r.RoundTripper.RoundTrip(httpReq)
 	if err != nil {
 		r.log(err)
 		r.t.FailNow()
