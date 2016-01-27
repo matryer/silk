@@ -35,6 +35,12 @@ func TestParseLine(t *testing.T) {
 		Src:  "* `?param=value`",
 		Type: parse.LineTypeParam,
 	}, {
+		Src:  "  * `Detail`: `123`",
+		Type: parse.LineTypeDetail,
+	}, {
+		Src:  "  * `?param=value`",
+		Type: parse.LineTypeParam,
+	}, {
 		Src:  "* ?param=value",
 		Type: parse.LineTypeParam,
 	}, {

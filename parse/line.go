@@ -182,11 +182,11 @@ var matchTypes = []struct {
 	Type: LineTypeSeparator,
 }, {
 	// * ?param=value
-	R:    "^\\* `?\\?(.*=?.*)`?",
+	R:    "^\\s*\\* `?\\?(.*=?.*)`?",
 	Type: LineTypeParam,
 }, {
 	// * Content-Type: application/json
-	R:    "^\\* (.*)",
+	R:    "^\\s*\\* (.*)",
 	Type: LineTypeDetail,
 }}
 
