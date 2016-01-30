@@ -1,3 +1,5 @@
+![Silk logo](https://github.com/matryer/silk/blob/master/other/SilkLogo-256.png)
+
 # silk
 
 Markdown based document-driven web API testing.
