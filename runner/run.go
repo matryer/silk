@@ -33,7 +33,7 @@ type Runner struct {
 	// By default it is http.DefaultTransport.
 	RoundTripper http.RoundTripper
 	// ParseBody is the function to use to attempt to parse
-	// response bodies to make data avaialble for assertions.
+	// response bodies to make data available for assertions.
 	ParseBody func(r io.Reader) (interface{}, error)
 	// Log is the function to log to.
 	Log func(string)
