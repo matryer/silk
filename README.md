@@ -139,7 +139,7 @@ The `silk` command runs tests against an HTTP endpoint.
 Usage:
 
 ```
-silk -url="{endpoint}" {testfiles}
+silk -silk.url="{endpoint}" {testfiles}
 ```
 
   * `{url}` the endpoint URL (e.g. `http://localhost:8080`)

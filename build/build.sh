@@ -25,7 +25,7 @@ function build {
 	zip $thisdir.zip $thisdir/*
 	cd $LOC
 	echo "    (cleaning up)"
-	#rm -rf $HERE/$thisdir
+	rm -rf $HERE/$thisdir
 	echo "    (done)"
 }
 
