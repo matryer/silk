@@ -14,6 +14,11 @@ import (
 	"github.com/unrolled/render"
 )
 
+var (
+	PageView *View
+	rnd      *render.Render
+)
+
 type View struct {
 	Host       string
 	SilkFolder string
@@ -30,79 +35,80 @@ type File struct {
 	HTML template.HTML
 }
 
+// Run the silk test against host for example "http://localhost:9080"
+func (v *View) Run(host string) {
+	fail := false
+	results := map[string]*WebRunnerT{}
+	for k, v := range v.Files {
+		t := RunOne(host, v.Path)
+		results[k] = t
+		if t.Fail {
+			fail = true
+		}
+	}
+	// FIXME not safe, needs a mutex, or channel
+	v.Fail = fail
+	v.Results = results
+}
+
+func (v *View) LoadFiles(folder string) {
+	files, err := WalkSilkMD(folder)
+	if err != nil {
+		log.Println("Error parsing md files", err)
+	}
+
+	v.Files = files
+}
+
 func main() {
 	silkFolder := "../testfiles/success"
 	Server(silkFolder)
 }
 
 func Server(folder string) {
-	rnd := render.New(render.Options{
+	rnd = render.New(render.Options{
 		Directory:  "templates",                // Specify what path to load the templates from.
 		Extensions: []string{".tmpl", ".html"}, // Specify extensions to load for templates.
 	})
 
-	files, err := WalkSilkMD(folder)
-	if err != nil {
-		log.Println("Error parsing md files", err)
-	}
+	PageView = &View{}
+	PageView.LoadFiles(folder)
 
-	results := map[string]*WebRunnerT{}
+	http.HandleFunc("/files/", MarkdownHandler)
+	http.HandleFunc("/logs/", LogsHandler)
 
-	index := func(w http.ResponseWriter, req *http.Request) {
-		fail := false
-		newRun := map[string]*WebRunnerT{}
-		for k, v := range files {
-			t := RunOne("http://localhost:9080", v.Path)
-			newRun[k] = t
-			if t.Fail {
-				fail = true
-			}
-		}
-		// FIXME not safe, needs a mutex, or channel
-		results = newRun
-		rnd.HTML(w, http.StatusOK, "index", &View{Files: files, Results: results, Fail: fail})
-	}
-
-	md := func(w http.ResponseWriter, req *http.Request) {
-		file := req.URL.Path[len("/files/"):]
-
-		data := template.HTML(files[file].HTML)
-		rnd.HTML(w, http.StatusOK, "md", data)
-	}
-
-	logs := func(w http.ResponseWriter, req *http.Request) {
-		file := req.URL.Path[len("/logs/"):]
-		out := results[file].LogOutut()
-		rnd.HTML(w, http.StatusOK, "log", out)
-	}
-
-	run := func(w http.ResponseWriter, req *http.Request) {
-		fail := false
-		newRun := map[string]*WebRunnerT{}
-		for k, v := range files {
-			t := RunOne("http://localhost:9080", v.Path)
-			newRun[k] = t
-			if t.Fail {
-				fail = true
-			}
-		}
-		// FIXME not safe, needs a mutex, or channel
-		results = newRun
-
-		rnd.HTML(w, http.StatusOK, "navstatus", &View{Files: files, Results: results, Fail: fail})
-	}
-
-	http.HandleFunc("/files/", md)
-	http.HandleFunc("/logs/", logs)
-
-	http.HandleFunc("/run/", run)
-	http.HandleFunc("/", index)
+	http.HandleFunc("/run/", RunHandler)
+	http.HandleFunc("/", IndexHandler)
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))
 
-	err = http.ListenAndServe(":3001", nil)
+	err := http.ListenAndServe(":3001", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
+
+}
+
+func IndexHandler(w http.ResponseWriter, req *http.Request) {
+	PageView.Run("http://localhost:9080")
+	rnd.HTML(w, http.StatusOK, "index", PageView)
+}
+
+func MarkdownHandler(w http.ResponseWriter, req *http.Request) {
+	file := req.URL.Path[len("/files/"):]
+
+	data := template.HTML(PageView.Files[file].HTML)
+	rnd.HTML(w, http.StatusOK, "md", data)
+}
+
+func LogsHandler(w http.ResponseWriter, req *http.Request) {
+	file := req.URL.Path[len("/logs/"):]
+	out := PageView.Results[file].LogOutut()
+	rnd.HTML(w, http.StatusOK, "log", out)
+}
+
+func RunHandler(w http.ResponseWriter, req *http.Request) {
+	PageView.Run("http://localhost:9080")
+	rnd.HTML(w, http.StatusOK, "navstatus", PageView)
 }
 
 func WalkSilkMD(folder string) (map[string]File, error) {
