@@ -51,6 +51,16 @@ func TestData(t *testing.T) {
 	is.False(subT.Failed())
 }
 
+func TestBodyField(t *testing.T) {
+	is := is.New(t)
+	subT := &testT{}
+	s := httptest.NewServer(testutil.EchoDataHandler())
+	defer s.Close()
+	r := runner.New(subT, s.URL)
+	r.RunFile("../testfiles/success/body.silk.md")
+	is.False(subT.Failed())
+}
+
 func TestRunFileSuccessNoBody(t *testing.T) {
 	is := is.New(t)
 	subT := &testT{}

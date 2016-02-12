@@ -49,5 +49,10 @@ func TestValueEqual(t *testing.T) {
 	is.True(v.Equal("text/xml; application/json; charset=utf-8"))
 	is.False(v.Equal("text/xml; charset=utf-8"))
 	is.Equal("regex", v.Type())
+	is.Equal(`/application/json/`, v.String())
 
+	v = ParseValue([]byte("/Silk/"))
+	is.True(v.Equal("My name is Silk."))
+	is.True(v.Equal("Silk is my name."))
+	is.False(v.Equal("I don't contain that word!"))
 }

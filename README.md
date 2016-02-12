@@ -105,6 +105,14 @@ You can optionally include a verbatim body using code blocks surrounded by three
     {"id": 1, "name": "Silk", "release_year": 2016}
     ```
 
+You may also make any number of regex assertions against the body using the `Body` object:
+
+```
+  * Body: /Hello world/
+  * Body: /This should be found too/
+  * Body: /and this/
+```
+
 Alternatively, you can specify a list (using `*`) of data fields to assert accessible via the `Data` object:
 
 ```

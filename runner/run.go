@@ -172,6 +172,9 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 		r.t.FailNow()
 		return
 	}
+	
+	// set the body as a field (see issue #15)
+	responseDetails["Body"] = string(actualBody)
 
 	// assert the body
 	if len(req.ExpectedBody) > 0 {
@@ -237,7 +240,7 @@ func (r *Runner) assertBody(actual, expected []byte) bool {
 }
 
 func (r *Runner) assertDetail(key string, actual interface{}, expected *parse.Value) bool {
-	if actual != expected.Data {
+	if !expected.Equal(actual) {
 		actualVal := parse.ParseValue([]byte(fmt.Sprintf("%v", actual)))
 		r.log(key, fmt.Sprintf("expected %s: %s  actual %T: %s", expected.Type(), expected, actual, actualVal))
 		return false

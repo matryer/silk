@@ -13,11 +13,22 @@ func (e errValue) Error() string {
 	return fmt.Sprintf("invalid value: %s (did you forget quotes?)", string(e))
 }
 
+func isRegex(v interface{}) bool {
+	s, ok := v.(string)
+	if !ok {
+		return false
+	}
+	return strings.HasPrefix(s, `/`) && strings.HasSuffix(s, `/`)
+}
+
 type Value struct {
 	Data interface{}
 }
 
 func (v Value) String() string {
+	if isRegex(v.Data) {
+		return v.Data.(string)
+	}
 	b, err := json.Marshal(v.Data)
 	if err != nil {
 		panic("silk: cannot marshal value: \"" + fmt.Sprintf("%v", v.Data) + "\": " + err.Error())
@@ -28,13 +39,12 @@ func (v Value) String() string {
 // Equal gets whether the Data and specified value are equal.
 // Supports regexp values.
 func (v Value) Equal(val interface{}) bool {
-	// check to see if this is regex
 	var str string
 	var ok bool
 	if str, ok = v.Data.(string); !ok {
 		return v.Data == val
 	}
-	if strings.HasPrefix(str, "/") && strings.HasSuffix(str, "/") {
+	if isRegex(str) {
 		// looks like regexp to me
 		regex := regexp.MustCompile(str[1 : len(str)-1])
 		// turn the value into a string
@@ -52,7 +62,7 @@ func (v Value) Type() string {
 	if str, ok = v.Data.(string); !ok {
 		return fmt.Sprintf("%T", v.Data)
 	}
-	if strings.HasPrefix(str, "/") && strings.HasSuffix(str, "/") {
+	if isRegex(str) {
 		return "regex"
 	}
 	return "string"
