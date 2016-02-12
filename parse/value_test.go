@@ -32,16 +32,22 @@ func TestValueEqual(t *testing.T) {
 	v := ParseValue([]byte("something"))
 	is.True(v.Equal("something"))
 	is.False(v.Equal("else"))
+	is.Equal("string", v.Type())
+
+	v = ParseValue([]byte("123"))
+	is.Equal("float64", v.Type())
 
 	v = ParseValue([]byte("/^2.{2}$/"))
 	is.True(v.Equal(200))
 	is.True(v.Equal(201))
 	is.False(v.Equal(404))
+	is.Equal("regex", v.Type())
 
 	v = ParseValue([]byte("/application/json/"))
 	is.True(v.Equal("application/json"))
 	is.True(v.Equal("application/json; charset=utf-8"))
 	is.True(v.Equal("text/xml; application/json; charset=utf-8"))
 	is.False(v.Equal("text/xml; charset=utf-8"))
+	is.Equal("regex", v.Type())
 
 }

@@ -29,8 +29,9 @@ type T interface {
 type Runner struct {
 	t       T
 	rootURL string
-	// Client is the http.Client to use when making requests.
-	Client *http.Client
+	// RoundTripper is the transport to use when making requests.
+	// By default it is http.DefaultTransport.
+	RoundTripper http.RoundTripper
 	// ParseBody is the function to use to attempt to parse
 	// response bodies to make data avaialble for assertions.
 	ParseBody func(r io.Reader) (interface{}, error)
@@ -38,15 +39,17 @@ type Runner struct {
 	Log func(string)
 	// Verbose is the function that logs verbose debug information.
 	Verbose func(...interface{})
+	// NewRequest makes a new http.Request. By default, uses http.NewRequest.
+	NewRequest func(method, urlStr string, body io.Reader) (*http.Request, error)
 }
 
 // New makes a new Runner with the given testing T target and the
 // root URL.
 func New(t T, URL string) *Runner {
 	return &Runner{
-		t:       t,
-		rootURL: URL,
-		Client:  http.DefaultClient,
+		t:            t,
+		rootURL:      URL,
+		RoundTripper: http.DefaultTransport,
 		Log: func(s string) {
 			fmt.Println(s)
 		},
@@ -56,7 +59,8 @@ func New(t T, URL string) *Runner {
 			}
 			fmt.Println(args...)
 		},
-		ParseBody: ParseJSONBody,
+		ParseBody:  ParseJSONBody,
+		NewRequest: http.NewRequest,
 	}
 }
 
@@ -117,7 +121,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	r.Verbose(string(req.Method), absPath)
 
 	// make request
-	httpReq, err := http.NewRequest(m, absPath, body)
+	httpReq, err := r.NewRequest(m, absPath, body)
 	if err != nil {
 		r.log("invalid request: ", err)
 		r.t.FailNow()
@@ -143,7 +147,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	httpReq.URL.RawQuery = q.Encode()
 
 	// perform request
-	httpRes, err := r.Client.Do(httpReq)
+	httpRes, err := r.RoundTripper.RoundTrip(httpReq)
 	if err != nil {
 		r.log(err)
 		r.t.FailNow()
@@ -198,7 +202,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 			var actual interface{}
 			var present bool
 			if actual, present = responseDetails[detail.Key]; !present {
-				r.log(detail.Key, fmt.Sprintf("expected %T: %s  actual %T: %s", detail.Value, detail, actual, "(missing)"))
+				r.log(detail.Key, fmt.Sprintf("expected %s: %s  actual %T: %s", detail.Value.Type(), detail, actual, "(missing)"))
 				r.fail(group, req, line.Number, "- "+detail.Key+" doesn't match")
 				return
 			}
@@ -235,7 +239,7 @@ func (r *Runner) assertBody(actual, expected []byte) bool {
 func (r *Runner) assertDetail(key string, actual interface{}, expected *parse.Value) bool {
 	if actual != expected.Data {
 		actualVal := parse.ParseValue([]byte(fmt.Sprintf("%v", actual)))
-		r.log(key, fmt.Sprintf("expected %T: %s  actual %T: %s", expected.Data, expected, actual, actualVal))
+		r.log(key, fmt.Sprintf("expected %s: %s  actual %T: %s", expected.Type(), expected, actual, actualVal))
 		return false
 	}
 	return true
@@ -243,16 +247,16 @@ func (r *Runner) assertDetail(key string, actual interface{}, expected *parse.Va
 
 func (r *Runner) assertData(data interface{}, errData error, key string, expected *parse.Value) bool {
 	if errData != nil {
-		r.log(key, fmt.Sprintf("expected %T: %s  actual: failed to parse body: %s", expected.Data, expected, errData))
+		r.log(key, fmt.Sprintf("expected %s: %s  actual: failed to parse body: %s", expected.Type(), expected, errData))
 		return false
 	}
 	if data == nil {
-		r.log(key, fmt.Sprintf("expected %T: %s  actual: no data", expected.Data, expected))
+		r.log(key, fmt.Sprintf("expected %s: %s  actual: no data", expected.Type(), expected))
 		return false
 	}
 	actual, ok := m.GetOK(map[string]interface{}{"Data": data}, key)
 	if !ok && expected.Data != nil {
-		r.log(key, fmt.Sprintf("expected %T: %s  actual: (missing)", expected.Data, expected))
+		r.log(key, fmt.Sprintf("expected %s: %s  actual: (missing)", expected.Type(), expected))
 		return false
 	}
 	if !ok && expected.Data == nil {
@@ -260,7 +264,7 @@ func (r *Runner) assertData(data interface{}, errData error, key string, expecte
 	}
 	if !expected.Equal(actual) {
 		actualVal := parse.ParseValue([]byte(fmt.Sprintf("%v", actual)))
-		r.log(key, fmt.Sprintf("expected %T: %s  actual %T: %s", expected.Data, expected, actual, actualVal))
+		r.log(key, fmt.Sprintf("expected %s: %s  actual %T: %s", expected.Type(), expected, actual, actualVal))
 		return false
 	}
 	return true

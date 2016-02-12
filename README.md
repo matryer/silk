@@ -1,3 +1,5 @@
+![Silk logo](https://github.com/matryer/silk/blob/master/other/SilkLogo-256.png)
+
 # silk
 
 Markdown based document-driven web API testing.
@@ -6,7 +8,7 @@ Markdown based document-driven web API testing.
   * Simple and robust [Markdown API](#markdown-api)
   * Comes with [real examples](https://github.com/matryer/silk/tree/master/testfiles/success) that you can copy (that are also part of the test suite for the project)
 
-PROJECT STATUS: Looking for BETA testers.
+PROJECT STATUS: Looking for BETA testers. [Read more about Silk in this blog post](https://medium.com/@matryer/introducing-silk-markdown-driven-api-tests-1f8cfb0ef99a#.kzpanz1xc).
 
 ![Example Silk test file](https://github.com/matryer/silk/blob/master/other/example.png)
 
@@ -97,7 +99,7 @@ If any of the headers do not match, the test will fail.
 
 #### Validating data
 
-You can optionally include a verbatim body using ` ``` ` code blocks. If the response body does not exactly match, the test will fail:
+You can optionally include a verbatim body using code blocks surrounded by three back tics. If the response body does not exactly match, the test will fail:
 
     ```
     {"id": 1, "name": "Silk", "release_year": 2016}
@@ -112,6 +114,8 @@ Alternatively, you can specify a list (using `*`) of data fields to assert acces
   * Data.release_year: 2016
   * Data.tags[0]: "testing"
   * Data.tags[1]: "markdown"
+  * Data[0].name: "Mat"
+  * Data[1].name: "David"
 ```
 
   * NOTE: Currenly this feature is only supported for JSON APIs.
@@ -137,7 +141,7 @@ The `silk` command runs tests against an HTTP endpoint.
 Usage:
 
 ```
-silk -url="{endpoint}" {testfiles}
+silk -silk.url="{endpoint}" {testfiles}
 ```
 
   * `{url}` the endpoint URL (e.g. `http://localhost:8080`)

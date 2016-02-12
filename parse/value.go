@@ -46,6 +46,18 @@ func (v Value) Equal(val interface{}) bool {
 	return v.Data == val
 }
 
+func (v Value) Type() string {
+	var str string
+	var ok bool
+	if str, ok = v.Data.(string); !ok {
+		return fmt.Sprintf("%T", v.Data)
+	}
+	if strings.HasPrefix(str, "/") && strings.HasSuffix(str, "/") {
+		return "regex"
+	}
+	return "string"
+}
+
 func ParseValue(src []byte) *Value {
 	var v interface{}
 	src = clean(src)
