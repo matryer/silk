@@ -52,6 +52,7 @@ func (v *View) Run(host string) {
 }
 
 func (v *View) LoadFiles(folder string) {
+	v.SilkFolder = folder
 	files, err := WalkSilkMD(folder)
 	if err != nil {
 		log.Println("Error parsing md files", err)
@@ -71,7 +72,9 @@ func Server(folder string) {
 		Extensions: []string{".tmpl", ".html"}, // Specify extensions to load for templates.
 	})
 
+	// global state
 	PageView = &View{}
+	PageView.Host = "http://localhost:9080"
 	PageView.LoadFiles(folder)
 
 	http.HandleFunc("/files/", MarkdownHandler)
@@ -89,7 +92,7 @@ func Server(folder string) {
 }
 
 func IndexHandler(w http.ResponseWriter, req *http.Request) {
-	PageView.Run("http://localhost:9080")
+	PageView.Run(PageView.Host)
 	rnd.HTML(w, http.StatusOK, "index", PageView)
 }
 
@@ -107,7 +110,8 @@ func LogsHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func RunHandler(w http.ResponseWriter, req *http.Request) {
-	PageView.Run("http://localhost:9080")
+	host := req.FormValue("host")
+	PageView.Run(host)
 	rnd.HTML(w, http.StatusOK, "navstatus", PageView)
 }
 

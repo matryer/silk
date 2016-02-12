@@ -13,10 +13,10 @@
 
 		<div class="row">
 			<div class="float-left" id="path-container">
-				<input type="text" name="path "id="path" placeholder="Watched directory" original-title="Change watched directory">
+				<input type="text" name="path "id="path" placeholder="Watched directory" original-title="Change watched directory" value="{{ .SilkFolder }}">
 			</div>
 			<div class="float-left" id="host-container">
-				<input type="text" name="host" id="host" placeholder="http://localhost:8081" original-title="Change url of the API">
+				<input type="text" name="host" id="host" placeholder="http://localhost:8081" original-title="Change url of the API" value="{{ .Host }}">
 			</div>
 			<ul class="float-right" id="control-buttons">
 						<li>
@@ -26,25 +26,26 @@
 		</div>
 
 		<script>
-		$('#play').click(function (e){
+		function runSilk(){
 			$.ajax({
-				type: "GET",
+				type: "POST",
 				url: '/run/',
+				data: {
+					 host: $('#host').val(),
+				},
 				success: function(data) {
 						 $('#nav-status').html(data);
 				}
 			});
+		}
+
+		$('#play').click(function (e){
+			runSilk();
 		});
 
 		$('#host').keydown(function (e){
 			if(e.keyCode == 13){
-				$.ajax({
-					type: "GET",
-					url: '/logs/' + file,
-					success: function(data) {
-							 $('#md').html(data);
-					}
-				});
+				runSilk();
 				alert('you pressed enter ^_^');
 			}
 		});
