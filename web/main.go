@@ -38,13 +38,13 @@ func Server(folder string) {
 	})
 
 	files, err := WalkSilkMD(folder)
+	results := map[string]*WebRunnerT{}
+
 	if err != nil {
 		log.Println("Error parsing md files", err)
 	}
 
 	index := func(w http.ResponseWriter, req *http.Request) {
-		results := map[string]*WebRunnerT{}
-		//Run("http://localhost:9080", filepaths ...string)
 		for k, v := range files {
 			t := RunOne("http://localhost:9080", v.Path)
 			fmt.Println("@@@@@  Fail - ", t.Fail)
@@ -60,13 +60,31 @@ func Server(folder string) {
 		rnd.HTML(w, http.StatusOK, "md", data)
 	}
 
+	logs := func(w http.ResponseWriter, req *http.Request) {
+		file := req.URL.Path[len("/logs/"):]
+		out := results[file].LogOutut()
+		rnd.HTML(w, http.StatusOK, "log", out)
+	}
+
 	run := func(w http.ResponseWriter, req *http.Request) {
-		//t := run("../../testfiles/success/comments.silk.md")
-		//http
-		//rnd.HTML(w, http.StatusOK, "status", t)
+		fail := false
+		newRun := map[string]*WebRunnerT{}
+		for k, v := range files {
+			t := RunOne("http://localhost:9080", v.Path)
+			newRun[k] = t
+			if t.Fail {
+				fail = true
+			}
+		}
+		// FIXME not safe, needs a mutex, or channel
+		results = newRun
+
+		rnd.HTML(w, http.StatusOK, "status", fail)
 	}
 
 	http.HandleFunc("/files/", md)
+	http.HandleFunc("/logs/", logs)
+
 	http.HandleFunc("/run/", run)
 	http.HandleFunc("/", index)
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets"))))

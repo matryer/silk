@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"path/filepath"
 
@@ -29,10 +30,19 @@ func (t *WebRunnerT) FailNow() {
 	t.Fail = true
 }
 func (t *WebRunnerT) Log(o ...interface{}) {
-	t.Logger.Println(o)
+	fmt.Println("@@@@@", o)
+	t.Logger.Println(o...)
 }
 func (t *WebRunnerT) LogOutut() string {
-	return string(t.Buffer.Bytes())
+	if t == nil {
+		return "<empty log>"
+	}
+
+	out := string(t.Buffer.Bytes())
+	if out == "" {
+		return "<empty log>"
+	}
+	return ""
 }
 
 func RunOne(host string, path string) *WebRunnerT {

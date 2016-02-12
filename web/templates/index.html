@@ -13,13 +13,20 @@
 
     <div class="container-fluid main">
       <script type="text/javascript">
-
       function renderFile(file){
          $.ajax({
            type: "GET",
            url: '/files/' + file,
            success: function(data) {
-                 // data is ur summary
+                $('#md').html(data);
+           }
+         });
+      }
+      function renderLog(file){
+         $.ajax({
+           type: "GET",
+           url: '/logs/' + file,
+           success: function(data) {
                 $('#md').html(data);
            }
          });
@@ -39,6 +46,7 @@
                   {{ end }}
                   {{ $k }}
                   </a>
+                  <a href="#{{ $k }}" onclick="renderLog({{ $k }});return false;">(log)</a>
                 </li>
               {{ end }}
             </ul>
