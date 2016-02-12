@@ -172,6 +172,9 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 		r.t.FailNow()
 		return
 	}
+	
+	// set the body as a field (see issue #15)
+	responseDetails["Body"] = string(actualBody)
 
 	// assert the body
 	if len(req.ExpectedBody) > 0 {
