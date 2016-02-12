@@ -240,7 +240,7 @@ func (r *Runner) assertBody(actual, expected []byte) bool {
 }
 
 func (r *Runner) assertDetail(key string, actual interface{}, expected *parse.Value) bool {
-	if actual != expected.Data {
+	if !expected.Equal(actual) {
 		actualVal := parse.ParseValue([]byte(fmt.Sprintf("%v", actual)))
 		r.log(key, fmt.Sprintf("expected %s: %s  actual %T: %s", expected.Type(), expected, actual, actualVal))
 		return false

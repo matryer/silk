@@ -39,7 +39,6 @@ func (v Value) String() string {
 // Equal gets whether the Data and specified value are equal.
 // Supports regexp values.
 func (v Value) Equal(val interface{}) bool {
-	// check to see if this is regex
 	var str string
 	var ok bool
 	if str, ok = v.Data.(string); !ok {
@@ -63,7 +62,7 @@ func (v Value) Type() string {
 	if str, ok = v.Data.(string); !ok {
 		return fmt.Sprintf("%T", v.Data)
 	}
-	if strings.HasPrefix(str, "/") && strings.HasSuffix(str, "/") {
+	if isRegex(str) {
 		return "regex"
 	}
 	return "string"
