@@ -1,5 +1,7 @@
 # Hello API
 
+The Hello API just says hello to people, in a very polite way.
+
 ## `GET /hello`
 
 Gets a personalised greeting.
