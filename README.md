@@ -99,7 +99,7 @@ If any of the headers do not match, the test will fail.
 
 #### Validating data
 
-You can optionally include a verbatim body using ` ``` ` code blocks. If the response body does not exactly match, the test will fail:
+You can optionally include a verbatim body using code blocks surrounded by three back tics. If the response body does not exactly match, the test will fail:
 
     ```
     {"id": 1, "name": "Silk", "release_year": 2016}
@@ -114,6 +114,8 @@ Alternatively, you can specify a list (using `*`) of data fields to assert acces
   * Data.release_year: 2016
   * Data.tags[0]: "testing"
   * Data.tags[1]: "markdown"
+  * Data[0].name: "Mat"
+  * Data[1].name: "David"
 ```
 
   * NOTE: Currenly this feature is only supported for JSON APIs.
