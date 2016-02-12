@@ -15,4 +15,4 @@
 
 * `Server`: `"EchoDataHandler"`
 * `Status`: `200`
-* `Body`: `/Silk/`
+* `Body`: /Silk/
