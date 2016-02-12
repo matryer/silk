@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -16,8 +15,13 @@ import (
 )
 
 type View struct {
+	Host       string
+	SilkFolder string
+
 	Files   map[string]File
 	Results map[string]*WebRunnerT
+
+	Fail bool
 }
 
 type File struct {
@@ -38,19 +42,25 @@ func Server(folder string) {
 	})
 
 	files, err := WalkSilkMD(folder)
-	results := map[string]*WebRunnerT{}
-
 	if err != nil {
 		log.Println("Error parsing md files", err)
 	}
 
+	results := map[string]*WebRunnerT{}
+
 	index := func(w http.ResponseWriter, req *http.Request) {
+		fail := false
+		newRun := map[string]*WebRunnerT{}
 		for k, v := range files {
 			t := RunOne("http://localhost:9080", v.Path)
-			fmt.Println("@@@@@  Fail - ", t.Fail)
-			results[k] = t
+			newRun[k] = t
+			if t.Fail {
+				fail = true
+			}
 		}
-		rnd.HTML(w, http.StatusOK, "index", &View{Files: files, Results: results})
+		// FIXME not safe, needs a mutex, or channel
+		results = newRun
+		rnd.HTML(w, http.StatusOK, "index", &View{Files: files, Results: results, Fail: fail})
 	}
 
 	md := func(w http.ResponseWriter, req *http.Request) {
@@ -79,7 +89,7 @@ func Server(folder string) {
 		// FIXME not safe, needs a mutex, or channel
 		results = newRun
 
-		rnd.HTML(w, http.StatusOK, "status", fail)
+		rnd.HTML(w, http.StatusOK, "navstatus", &View{Files: files, Results: results, Fail: fail})
 	}
 
 	http.HandleFunc("/files/", md)

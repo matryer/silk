@@ -6,14 +6,54 @@
 
 
 		</div>
+
+		<div id="loadingDiv" class="hide">
+			Loading....
+		</div>
+
 		<div class="row">
 			<div class="float-left" id="path-container">
-				<input type="text" id="path" placeholder="Watched directory" original-title="Change watched directory">
+				<input type="text" name="path "id="path" placeholder="Watched directory" original-title="Change watched directory">
+			</div>
+			<div class="float-left" id="host-container">
+				<input type="text" name="host" id="host" placeholder="http://localhost:8081" original-title="Change url of the API">
 			</div>
 			<ul class="float-right" id="control-buttons">
-						<li class="fa fa-pause" id="play-pause" original-title="Play/pause tests"></li>
-						<li class="fa fa-refresh" id="run-tests" original-title="Run tests"></li>
+						<li>
+							<button id="play" type="button" class="fa fa-play btn btn-success"></button>
+						</li>
 			</ul>
 		</div>
+
+		<script>
+		$('#play').click(function (e){
+			$.ajax({
+				type: "GET",
+				url: '/run/',
+				success: function(data) {
+						 $('#nav-status').html(data);
+				}
+			});
+		});
+
+		$('#host').keydown(function (e){
+			if(e.keyCode == 13){
+				$.ajax({
+					type: "GET",
+					url: '/logs/' + file,
+					success: function(data) {
+							 $('#md').html(data);
+					}
+				});
+				alert('you pressed enter ^_^');
+			}
+		});
+		$('#path').keydown(function (e){
+			if(e.keyCode == 13){
+				alert('you pressed enter ^_^');
+			}
+		});
+		</script>
+
 	</div>
 </header>

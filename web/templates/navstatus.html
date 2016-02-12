@@ -1,0 +1,23 @@
+
+{{ if .Fail }}
+  <span>Fail :(</span>
+{{ else }}
+  <span>Success</span>
+{{ end }}
+
+<ul class="nav nav-stacked" id="sidebar">
+  {{ range $k, $v := .Files }}
+    <li>
+      <a href="#{{ $k }}" onclick="renderFile({{ $k }});return false;">
+      {{ $result := index $.Results $k }}
+      {{ if $result.Fail }}
+      <i class="fa fa-exclamation-circle failure"></i>
+      {{ else }}
+      <i class="fa fa-check-circle success"></i>
+      {{ end }}
+      {{ $k }}
+      </a>
+      <a href="#{{ $k }}" onclick="renderLog({{ $k }});return false;">(log)</a>
+    </li>
+  {{ end }}
+</ul>

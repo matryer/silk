@@ -45,8 +45,8 @@ func (t *WebRunnerT) LogOutut() string {
 	return ""
 }
 
-func RunOne(host string, path string) *WebRunnerT {
-	t := NewWebRunnerT(path)
+func RunOne(host string, filename string) *WebRunnerT {
+	t := NewWebRunnerT(filename)
 	runner.New(t, host).RunGlob(filepath.Glob(t.Filepath))
 	return t
 }
