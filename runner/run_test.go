@@ -57,7 +57,7 @@ func TestBodyField(t *testing.T) {
 	s := httptest.NewServer(testutil.EchoDataHandler())
 	defer s.Close()
 	r := runner.New(subT, s.URL)
-	r.RunFile("../testfiles/success/body.silk.md")
+	r.RunFile("../testfiles/success/body-as-field.silk.md")
 	is.False(subT.Failed())
 }
 
