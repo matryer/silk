@@ -34,9 +34,8 @@ func main() {
 		printhelp()
 		return
 	}
-	if len(*url) == 0 {
-		fmt.Println("must provide -silk.url")
-		printhelp()
+	if *url == "" {
+		fmt.Println("silk.url argument is required")
 		return
 	}
 	root = "."
