@@ -71,11 +71,9 @@ func testFunc(t *testing.T) {
 
 func printhelp() {
 	printversion()
-	fmt.Println(`usage:
-  silk [path/to/files/[pattern]]`)
+	fmt.Println("usage: silk [path/to/files/[pattern]]")
 	flag.PrintDefaults()
-	fmt.Println()
-	fmt.Println(`By default silk will run ./*.silk.md`)
+	fmt.Println("\nBy default silk will run ./*.silk.md")
 }
 
 func printversion() {
