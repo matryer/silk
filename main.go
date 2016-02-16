@@ -18,11 +18,17 @@ import (
 */
 
 var (
-	showVersion = flag.Bool("version", false, "show version and exit")
-	url         = flag.String("silk.url", "", "(required) target url")
-	help        = flag.Bool("help", false, "show help")
-	root        string
+	showVersion    = flag.Bool("version", false, "show version and exit")
+	url            = flag.String("silk.url", "", "(required) target url")
+	help           = flag.Bool("help", false, "show help")
+	root           string
+	defaultPattern string
 )
+
+func init() {
+	root = "."
+	defaultPattern = "*.silk.md"
+}
 
 func main() {
 	flag.Parse()
@@ -38,7 +44,6 @@ func main() {
 		fmt.Println("silk.url argument is required")
 		return
 	}
-	root = "."
 	args := flag.Args()
 	if len(args) > 0 {
 		root = args[0]
@@ -50,7 +55,7 @@ func main() {
 	}
 	if info.IsDir() {
 		// add default pattern
-		root = filepath.Join(root, "*.silk.md")
+		root = filepath.Join(root, defaultPattern)
 	}
 	testing.Main(func(pat, str string) (bool, error) { return true, nil },
 		[]testing.InternalTest{{Name: "silk", F: testFunc}},
@@ -72,7 +77,7 @@ func printhelp() {
 	printversion()
 	fmt.Println("usage: silk [path/to/files/[pattern]]")
 	flag.PrintDefaults()
-	fmt.Println("\nBy default silk will run ./*.silk.md")
+	fmt.Printf("\nBy default silk will run ./%s\n", defaultPattern)
 }
 
 func printversion() {
