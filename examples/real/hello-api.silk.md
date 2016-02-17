@@ -10,7 +10,7 @@ Gets a personalised greeting.
 
 ===
 
-Returns:
+### Example response
 
 * Status: `200`
 * Content-Type: `text/html; charset=utf-8`
