@@ -13,6 +13,8 @@ Gets a personalised greeting.
 * Status: `200`
 * Content-Type: `text/html; charset=utf-8`
 
+Returns the text greeting:
+
 ```
 Hello Mat.
 ```
