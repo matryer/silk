@@ -139,7 +139,7 @@ Values may be regex, if they begin and end with a forward slash: `/`. The assert
 
 The above will assert that:
 
-  * The status beings with `2`, and
+  * The status looks like `2xx`, and
   * The `Content-Type` contains `application/json`
 
 ## Command line
