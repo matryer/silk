@@ -183,3 +183,8 @@ func TestAPIEndpoint(t *testing.T) {
 ```
 
   * See the [documentation for the silk/runner package](https://godoc.org/github.com/matryer/silk/runner)
+
+## Credit
+
+  * Special thanks to @dahernan for his contributions and criticisms of Silk
+  * Silk logo by [Chris Ryer](http://chrisryer.co.uk)
