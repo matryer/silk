@@ -186,5 +186,5 @@ func TestAPIEndpoint(t *testing.T) {
 
 ## Credit
 
-  * Special thanks to @dahernan for his contributions and criticisms of Silk
+  * Special thanks to [@dahernan](https://github.com/dahernan) for his contributions and criticisms of Silk
   * Silk logo by [Chris Ryer](http://chrisryer.co.uk)
