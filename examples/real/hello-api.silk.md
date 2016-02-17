@@ -10,6 +10,8 @@ Gets a personalised greeting.
 
 ===
 
+Returns:
+
 * Status: `200`
 * Content-Type: `text/html; charset=utf-8`
 
