@@ -11,12 +11,6 @@ import (
 	"github.com/matryer/silk/runner"
 )
 
-/*
-	Usage:
-
-		silk [path] -p=../*.silk.md
-*/
-
 var (
 	showVersion    = flag.Bool("version", false, "show version and exit")
 	url            = flag.String("silk.url", "", "(required) target url")
