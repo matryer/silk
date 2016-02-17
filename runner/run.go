@@ -230,6 +230,7 @@ func (r *Runner) assertBody(actual, expected []byte) bool {
 		r.log("```")
 		r.log(string(expected))
 		r.log("```")
+		r.Log("")
 		r.log("actual:")
 		r.log("```")
 		r.log(string(actual))

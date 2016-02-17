@@ -1,0 +1,119 @@
+Introducing Silk
+Go 1.6 Release Party
+17 Feb 2016
+
+Mat Ryer
+http://silktest.org/
+@matryer
+
+* The problem
+
+- Testing RESTful APIs is easy, but easily gets messy
+- Existing tools do too much, and cost money
+- Documentation and automated tests are different things
+- Difficult to TDD RESTful APIs
+- Handler unit tests don't _always_ test middleware
+
+* What is Silk?
+
+.image SilkLogo-256.png
+
+Markdown based document-driven RESTful API testing
+
+(Va como la seda)
+
+* Silk features
+
+- Markdown test files are documentation AND executable tests
+- Describe the requests and assert things about the responses
+- Assertions are examples in the docs
+- Most text is ignored so you can describe things to users
+- Not much new to learn (if anything)
+- Looks great in GitHub
+- Run tests locally, with `httptest` or on live site (any host)
+- `runner` package for Gophers that uses `testing.T`
+
+* Example
+
+.code example.silk.md
+
+* Example rendered
+
+.image example-rendered.png
+
+* Markdown format
+
+- # Group - Top level headings represent groups of requests
+- ## GET /path - Second level headings represent a request
+- Code blocks with ```````` three back tics represent bodies
+- * Field: value - Lists describe headers and assertions
+- * ?param=value - Request parameters
+- === seperators break requests from responses
+- Comments (starting with //) are ignored
+- Plain text is ignored to allow you to add documentation
+- Inline back tics are ignored and are available for formatting
+
+* Silk tool
+
+    $ silk -silk.url="https://outlearn-hello.appspot.com"
+
+    running 1 file(s)
+    body expected:  
+    ```  
+    Hello Silky.  
+    ```  
+    actual:  
+    ```  
+    Hello Silk.  
+    ```  
+    --- FAIL: GET /hello?name=Silk 
+     hello.silk.md:8 - body doesn't match  
+    --- FAIL: silk (0.42s)
+    FAIL
+
+* In Go
+
+    package server_test
+
+    import (
+      "testing"
+      "net/http/httptest"
+      "github.com/matryer/silk/runner"
+    )
+
+    func TestHello(t *testing.T) {
+    
+    	// start test server
+    	server := httptest.NewServer(MyHandler())
+    	defer server.Close()
+    
+    	// make a new runner using the server URL as the target
+    	// and run the test file.
+    	runner.New(t, server.URL).RunFile("hello.silk.md")
+    
+    }
+
+Familiar setup and teardown
+
+* Tips and tricks
+
+- JSON bodies are understood
+
+   * Data.name: "Mat"
+   * Data.package: "Silk"
+   * Data.tags[0]: "golang"
+   * Data.tags[1]: "testing"
+
+- Extend to any format by overriding `ParseBody` function on runner
+- Override `NewRequest` and `RoundTripper` fields in runner
+- It works on App Engine apps too
+- Supports regexp:
+
+    * Status: /^2.{2}$/
+    * Content-Type: /application/json/
+
+* Get involved?
+
+- Ideas?
+- Help us get to v1 release
+- Visit [[http://silktest.org]] or go to [[https://github.com/matryer/silk]]
