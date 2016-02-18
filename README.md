@@ -8,7 +8,7 @@ Markdown based document-driven web API testing.
   * Simple and robust [Markdown API](#markdown-api)
   * Comes with [real examples](https://github.com/matryer/silk/tree/master/testfiles/success) that you can copy (that are also part of the test suite for the project)
 
-[(VIDEO) Watch the talk about Silk](https://skillsmatter.com/skillscasts/7636-go-release#video) or [(BLOG) read about Silk in this blog post](https://medium.com/@matryer/introducing-silk-markdown-driven-api-tests-1f8cfb0ef99a#.kzpanz1xc).
+[(VIDEO) Watch the talk about Silk](https://skillsmatter.com/skillscasts/7636-go-release#video) (with [slides](http://go-talks.appspot.com/github.com/matryer/silk/other/presentation/silk.slide#1)) or [(BLOG) read about Silk in this blog post](https://medium.com/@matryer/introducing-silk-markdown-driven-api-tests-1f8cfb0ef99a#.kzpanz1xc).
 
 ![Example Silk test file](https://github.com/matryer/silk/blob/master/other/example.png)
 
