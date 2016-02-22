@@ -1,3 +1,4 @@
 package main
 
-const version = "v0.1.3"
+// Version is the git hash at the point of building.
+var Version string

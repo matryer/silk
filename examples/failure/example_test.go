@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	example "github.com/matryer/silk/examples/failure"
-	"github.com/matryer/silk/runner"
 )
 
 func TestHello(t *testing.T) {
@@ -16,6 +15,10 @@ func TestHello(t *testing.T) {
 
 	// make a new runner using the server URL as the target
 	// and run the test file.
-	runner.New(t, server.URL).RunFile("hello.silk.md")
+
+	//runner.New(t, server.URL).RunFile("hello.silk.md")
+
+	// NOTE: Uncomment the line above to see a real failure.
+	//       Is it commented out so the tests don't fail :)
 
 }
