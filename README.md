@@ -1,6 +1,6 @@
 ![Silk logo](https://github.com/matryer/silk/blob/master/other/SilkLogo-256.png)
 
-# silk
+# silk [![Build Status](https://travis-ci.org/matryer/silk.svg?branch=master)](https://travis-ci.org/matryer/silk)
 
 Markdown based document-driven web API testing.
 
