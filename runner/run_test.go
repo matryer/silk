@@ -111,7 +111,8 @@ func TestFailureWrongHeader(t *testing.T) {
 	r.RunGroup(g...)
 	is.True(subT.Failed())
 	logstr := strings.Join(logs, "\n")
-	is.True(strings.Contains(logstr, `Content-Type expected string: "wrong/type"  actual string: "text/plain; charset=utf-8"`))
+
+	is.True(strings.Contains(logstr, `Content-Type expected: "wrong/type"  actual: "text/plain; charset=utf-8"`))
 	is.True(strings.Contains(logstr, "--- FAIL: GET /echo"))
 	is.True(strings.Contains(logstr, "../testfiles/failure/echo.failure.wrongheader.silk.md:22 - Content-Type doesn't match"))
 }
@@ -125,6 +126,44 @@ func TestGlob(t *testing.T) {
 	r.Log = func(s string) {} // don't bother logging
 	r.RunGlob(filepath.Glob("../testfiles/failure/*.silk.md"))
 	is.True(subT.Failed())
+}
+
+func TestFailureFieldsSameType(t *testing.T) {
+	is := is.New(t)
+	subT := &testT{}
+	s := httptest.NewServer(testutil.EchoHandler())
+	defer s.Close()
+	r := runner.New(subT, s.URL)
+	var logs []string
+	r.Log = func(s string) {
+		logs = append(logs, s)
+	}
+	g, err := parse.ParseFile("../testfiles/failure/echo.failure.fieldssametype.silk.md")
+	is.NoErr(err)
+	r.RunGroup(g...)
+	is.True(subT.Failed())
+	logstr := strings.Join(logs, "\n")
+
+	is.True(strings.Contains(logstr, "Status expected: 400  actual: 200"))
+}
+
+func TestFailureFieldsDifferentTypes(t *testing.T) {
+	is := is.New(t)
+	subT := &testT{}
+	s := httptest.NewServer(testutil.EchoHandler())
+	defer s.Close()
+	r := runner.New(subT, s.URL)
+	var logs []string
+	r.Log = func(s string) {
+		logs = append(logs, s)
+	}
+	g, err := parse.ParseFile("../testfiles/failure/echo.failure.fieldsdifferenttypes.silk.md")
+	is.NoErr(err)
+	r.RunGroup(g...)
+	is.True(subT.Failed())
+	logstr := strings.Join(logs, "\n")
+
+	is.True(strings.Contains(logstr, `Status expected string: "400"  actual float64: 200`))
 }
 
 type testT struct {
