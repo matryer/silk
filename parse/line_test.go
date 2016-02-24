@@ -44,6 +44,12 @@ func TestParseLine(t *testing.T) {
 		Src:  "* ?param=value",
 		Type: parse.LineTypeParam,
 	}, {
+		Src:  "* Cookie: name=value",
+		Type: parse.LineTypeDetail,
+	}, {
+		Src:  `* Set-Cookie: "another=true"`,
+		Type: parse.LineTypeDetail,
+	}, {
 		Src:  "===",
 		Type: parse.LineTypeSeparator,
 	}, {
@@ -104,9 +110,9 @@ func TestLineParams(t *testing.T) {
 
 func TestLineDetail(t *testing.T) {
 	is := is.New(t)
-	l, err := parse.ParseLine(0, []byte(`* Key: "Value"`))
+	l, err := parse.ParseLine(0, []byte(`* Key-Here: "Value"`))
 	is.NoErr(err)
 	detail := l.Detail()
-	is.Equal(detail.Key, "Key")
+	is.Equal(detail.Key, "Key-Here")
 	is.Equal(detail.Value.Data, "Value")
 }

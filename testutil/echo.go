@@ -28,6 +28,12 @@ func EchoDataHandler() http.Handler {
 func handleEcho(w http.ResponseWriter, r *http.Request) {
 	// set Server header
 	w.Header().Set("Server", "EchoHandler")
+	if len(r.Cookies()) > 0 {
+		// echo cookies
+		for _, cookie := range r.Cookies() {
+			http.SetCookie(w, cookie)
+		}
+	}
 	// write summary of request
 	fmt.Fprintln(w, strings.ToUpper(r.Method), r.URL.Path)
 	// put in the Content-Length
@@ -40,6 +46,11 @@ func handleEcho(w http.ResponseWriter, r *http.Request) {
 	writeSortedQuery(w, r.URL.Query())
 	// write headers
 	writeSortedHeaders(w, r.Header)
+	// write cookies
+	if len(r.Cookies()) > 0 {
+		// write sorted cookies out (sorted by name)
+		writeSortedCookies(w, r.Cookies(), r)
+	}
 	// write body
 	if _, err := io.Copy(w, &bodybuf); err != nil {
 		log.Println("copying request into response failed:", err)
@@ -94,6 +105,22 @@ func writeSortedHeaders(w io.Writer, headers http.Header) {
 			}
 			fmt.Fprintln(w, "* "+k+":", string(vb))
 		}
+	}
+}
+
+func writeSortedCookies(w io.Writer, cookies []*http.Cookie, r *http.Request) {
+	var keys []string
+	for _, c := range cookies {
+		keys = append(keys, c.Name)
+	}
+	sort.Strings(keys)
+	for _, k := range keys {
+		cookie, err := r.Cookie(k)
+		if err != nil {
+			log.Println("failed to get cookie:", err)
+			continue
+		}
+		fmt.Fprintln(w, "* Cookie:", cookie.String())
 	}
 }
 

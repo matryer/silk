@@ -127,6 +127,16 @@ func TestGlob(t *testing.T) {
 	is.True(subT.Failed())
 }
 
+func TestCookies(t *testing.T) {
+	is := is.New(t)
+	subT := &testT{}
+	s := httptest.NewServer(testutil.EchoHandler())
+	defer s.Close()
+	r := runner.New(subT, s.URL)
+	r.RunFile("../testfiles/success/cookies.silk.md")
+	is.False(subT.Failed())
+}
+
 type testT struct {
 	log    []string
 	failed bool
