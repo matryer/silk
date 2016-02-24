@@ -84,6 +84,16 @@ Adding parameters to the path (like `GET /path?q=something`) can be tricky, espe
 
 The parameters will be correctly added to the URL path before the request is made.
 
+#### Cookies
+
+Setting cookies on a request can be done using the [HTTP header](https://en.wikipedia.org/wiki/HTTP_cookie#Implementation) pattern:
+
+```
+* Cookie: "key=value"
+```
+
+  * See [asserting cookies](#asserting-cookies).
+
 ### Assertions
 
 Following the `===` separator, you can specify assertions about the response. At a minimum, it is recommended that you assert the status code to ensure the request succeeded:
@@ -100,6 +110,16 @@ You may also specify response headers in the same format as request headers:
 ```
 
 If any of the headers do not match, the test will fail.
+
+#### Asserting cookies
+
+To assert that a cookie is present in a response, make a regex assertion against the `Set-Cookie` HTTP header:
+
+```
+  * Set-Cookie: /key=value/
+```
+
+  * All cookie strings are present in a single `Set-Cookie` seperated by a pipe character.
 
 #### Validating data
 
