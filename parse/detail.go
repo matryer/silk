@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"regexp"
 )
 
@@ -36,15 +35,6 @@ func (d *Detail) String() string {
 		return d.Key + ": " + fmt.Sprint(d.Value)
 	}
 	return d.Key + ": " + string(valbytes)
-}
-
-func (d *Detail) IsCookie() bool {
-	log.Println(d.Value.String())
-	return false
-}
-
-func (d *Detail) Cookie() *Detail {
-	return nil
 }
 
 func clean(b []byte) []byte {
