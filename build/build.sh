@@ -14,14 +14,13 @@ mkdir $HERE
 
 GM_GIT_SHORT="echo -n `git log --pretty=format:'%h' -n 1`"
 GM_GIT_INFO="$(echo -n `git rev-parse --abbrev-ref HEAD` `git log --pretty=format:'%H (%aD)' -n 1`)"
-GM_GIT_INFO=${GM_GIT_INFO// /__}
-echo "with Gitinfo: $GM_GIT_INFO"
+echo "with Gitinfo: ${GM_GIT_INFO// /__}"
 
 function build {
 	echo "  for $1 $2..."
 	echo "    (building)"
 	thisdir="silk-$GM_GIT_SHORT-$1-$2"
-	GOOS=$1 GOARCH=$2 go build -ldflags "-X main.Gitinfo=${GM_GIT_INFO}" -o $HERE/$dir/$thisdir/silk
+	GOOS=$1 GOARCH=$2 go build -ldflags "-X main.Gitinfo=${GM_GIT_INFO// /__}" -o $HERE/$dir/$thisdir/silk
 	echo "Version $GM_GIT_INFO - https://github.com/matryer/silk/commit/$LASTCOMMIT" > $HERE/$dir/$thisdir/README.md
 	echo "    (compressing)"
 	cd $HERE
