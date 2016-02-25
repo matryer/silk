@@ -12,7 +12,7 @@ cd $LOC
 rm -rf $HERE
 mkdir $HERE
 
-GM_GIT_SHORT="echo -n `git log --pretty=format:'%h' -n 1`"
+GM_GIT_SHORT="$(echo -n `git log --pretty=format:'%h' -n 1`)"
 GM_GIT_INFO="$(echo -n `git rev-parse --abbrev-ref HEAD` `git log --pretty=format:'%H (%aD)' -n 1`)"
 echo "with Gitinfo: ${GM_GIT_INFO// /__}"
 
