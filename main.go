@@ -75,5 +75,5 @@ func printhelp() {
 }
 
 func printversion() {
-	fmt.Println("silk", version)
+	fmt.Println("silk", Gitinfo)
 }

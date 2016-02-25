@@ -11,15 +11,18 @@ echo "Building https://github.com/matryer/silk/commit/$LASTCOMMIT..."
 cd $LOC
 rm -rf $HERE
 mkdir $HERE
-VERSION=`cat version.go | grep version | awk -F'"' '{print $2}'`
-echo "Version: $VERSION"
+
+GM_GIT_SHORT="echo -n `git log --pretty=format:'%h' -n 1`"
+GM_GIT_INFO="$(echo -n `git rev-parse --abbrev-ref HEAD` `git log --pretty=format:'%H (%aD)' -n 1`)"
+GM_GIT_INFO=${GM_GIT_INFO// /__}
+echo "with Gitinfo: $GM_GIT_INFO"
 
 function build {
 	echo "  for $1 $2..."
 	echo "    (building)"
-	thisdir=silk-$VERSION-$1-$2
-	GOOS=$1 GOARCH=$2 go build -o $HERE/$dir/$thisdir/silk
-	echo "Version $VERSION - https://github.com/matryer/silk/commit/$LASTCOMMIT" > $HERE/$dir/$thisdir/README.md
+	thisdir="silk-$GM_GIT_SHORT-$1-$2"
+	GOOS=$1 GOARCH=$2 go build -ldflags "-X main.Gitinfo=${GM_GIT_INFO}" -o $HERE/$dir/$thisdir/silk
+	echo "Version $GM_GIT_INFO - https://github.com/matryer/silk/commit/$LASTCOMMIT" > $HERE/$dir/$thisdir/README.md
 	echo "    (compressing)"
 	cd $HERE
 	zip $thisdir.zip $thisdir/*
