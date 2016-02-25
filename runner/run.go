@@ -162,6 +162,12 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 			responseDetails[k] = v
 		}
 	}
+	// add cookies to repsonse details
+	var cookieStrs []string
+	for _, cookie := range httpRes.Cookies() {
+		cookieStrs = append(cookieStrs, cookie.String())
+	}
+	responseDetails["Set-Cookie"] = strings.Join(cookieStrs, "|")
 
 	// set other details
 	responseDetails["Status"] = float64(httpRes.StatusCode)
@@ -205,7 +211,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 			var actual interface{}
 			var present bool
 			if actual, present = responseDetails[detail.Key]; !present {
-				r.log(detail.Key, fmt.Sprintf("expected %s: %s  actual %T: %s", detail.Value.Type(), detail, actual, "(missing)"))
+				r.log(detail.Key, fmt.Sprintf("expected %s: %s  actual %T: %s", detail.Value.Type(), detail.Value, actual, "(missing)"))
 				r.fail(group, req, line.Number, "- "+detail.Key+" doesn't match")
 				return
 			}
