@@ -8,7 +8,7 @@ Create a comment.
 
 ### Example request
 
-```
+```json
 {
   "name":    "Mat",
   "comment": "Good work"
@@ -23,7 +23,7 @@ Create a comment.
 
 * `Status`: `201`
 
-```
+```json
 {
   "id":      "123",
   "name":    "Mat",

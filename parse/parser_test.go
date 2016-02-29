@@ -38,11 +38,13 @@ func TestParser(t *testing.T) {
   "name":    "Mat",
   "comment": "Good work"
 }`)
+	is.Equal(req1.BodyType, "json")
 	is.Equal(req1.ExpectedBody.String(), `{
   "id":      "123",
   "name":    "Mat",
   "comment": "Good work"
 }`)
+	is.Equal(req1.ExpectedBodyType, "json")
 
 	req2 := group.Requests[1]
 	is.Equal("GET", req2.Method)

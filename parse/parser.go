@@ -26,14 +26,16 @@ type Group struct {
 }
 
 type Request struct {
-	Path    []byte
-	Method  []byte
-	Details Lines
-	Params  Lines
-	Body    Lines
-
-	ExpectedBody    Lines
-	ExpectedDetails Lines
+	Path     []byte
+	Method   []byte
+	Details  Lines
+	Params   Lines
+	Body     Lines
+	BodyType string
+	//===
+	ExpectedBody     Lines
+	ExpectedBodyType string
+	ExpectedDetails  Lines
 }
 
 type ErrLine struct {
@@ -128,6 +130,11 @@ func Parse(filename string, r io.Reader) ([]*Group, error) {
 				return nil, &ErrLine{N: n, Err: errUnexpectedCodeblock}
 			}
 
+			var bodyType string
+			if len(line.Bytes) > 3 {
+				bodyType = string(line.Bytes[3:])
+			}
+
 			var lines Lines
 			var err error
 			n, lines, err = scancodeblock(n, scanner)
@@ -136,8 +143,10 @@ func Parse(filename string, r io.Reader) ([]*Group, error) {
 			}
 			if settingExpectations {
 				currentRequest.ExpectedBody = lines
+				currentRequest.ExpectedBodyType = bodyType
 			} else {
 				currentRequest.Body = lines
+				currentRequest.BodyType = bodyType
 			}
 
 		case LineTypeDetail:
