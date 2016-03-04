@@ -208,6 +208,18 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 				}
 				continue
 			}
+			if strings.HasPrefix(detail.Key, "len(Data)") {
+				parseDataOnce.Do(func() {
+					data, errData = r.ParseBody(bytes.NewReader(actualBody))
+				})
+				count := float64(len(data.([]interface{})))
+				if count != detail.Value.Data {
+					msg := fmt.Sprintf("%v is %v, doesn't match with %v", detail.Key, count, detail.Value)
+					r.fail(group, req, line.Number, "- "+msg)
+					return
+				}
+				continue
+			}
 			var actual interface{}
 			var present bool
 			if actual, present = responseDetails[detail.Key]; !present {
