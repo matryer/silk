@@ -166,6 +166,18 @@ The above will assert that:
   * The status looks like `2xx`, and
   * The `Content-Type` contains `application/json`
 
+#### Counting items
+
+Add ``.length`` after ``Data`` or property names to count items inside.
+
+```
+  * Status: 201
+  * Content-Type: "application/json"
+  * Data.length: 2
+  * Data[0].tags.length: 2
+  * Data[1].name.length: 6
+```
+
 ## Command line
 
 The `silk` command runs tests against an HTTP endpoint.
