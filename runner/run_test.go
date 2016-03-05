@@ -176,6 +176,16 @@ func TestFailureFieldsDifferentTypes(t *testing.T) {
 	is.True(strings.Contains(logstr, `Status expected string: "400"  actual float64: 200`))
 }
 
+func TestCountItems(t *testing.T) {
+	is := is.New(t)
+	subT := &testT{}
+	s := httptest.NewServer(testutil.EchoDataHandler())
+	defer s.Close()
+	r := runner.New(subT, s.URL)
+	r.RunFile("../testfiles/success/count-items.silk.md")
+	is.False(subT.Failed())
+}
+
 type testT struct {
 	log    []string
 	failed bool
