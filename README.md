@@ -7,6 +7,7 @@ Markdown based document-driven web API testing.
   * Write nice looking Markdown documentation ([like this](https://github.com/matryer/silk/blob/master/testfiles/success/example.silk.md)), and then run it using the [silk command](#command-line)
   * Simple and robust [Markdown API](#markdown-api)
   * Comes with [real examples](https://github.com/matryer/silk/tree/master/testfiles/success) that you can copy (that are also part of the test suite for the project)
+  * 10% discount on [LightPaper markdown editor app](http://lightpaper.42squares.in) for Silk users: use `SILKTEST` code.
 
 ## Learn more
 
