@@ -13,8 +13,8 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"github.com/craftgear/silk/parse"
 	"github.com/matryer/m"
+	"github.com/matryer/silk/parse"
 )
 
 const indent = " "
@@ -278,11 +278,13 @@ func (r *Runner) assertData(data interface{}, errData error, key string, expecte
 		key = strings.Replace(key, ".length", "", 1)
 		actual, ok = m.GetOK(map[string]interface{}{"Data": data}, key)
 
-		if slice, ok := actual.([]interface{}); ok {
-			actual = float64(len(slice))
-		}
-		if str, ok := actual.(string); ok {
-			actual = float64(utf8.RuneCountInString(str))
+		if ok {
+			if slice, _ok := actual.([]interface{}); _ok {
+				actual = float64(len(slice))
+			}
+			if str, _ok := actual.(string); _ok {
+				actual = float64(utf8.RuneCountInString(str))
+			}
 		}
 	}
 
