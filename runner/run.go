@@ -13,8 +13,8 @@ import (
 	"testing"
 	"unicode/utf8"
 
-	"github.com/craftgear/silk/parse"
 	"github.com/matryer/m"
+	"github.com/matryer/silk/parse"
 )
 
 const indent = " "
