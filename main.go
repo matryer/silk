@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/craftgear/silk/runner"
+	"github.com/matryer/silk/runner"
 )
 
 var (
