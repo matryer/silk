@@ -30,6 +30,7 @@ type Runner struct {
 	t       T
 	rootURL string
 	// DoRequest makes the request and returns the response.
+	// By default uses http.DefaultClient.Do.
 	DoRequest func(r *http.Request) (*http.Response, error)
 	// ParseBody is the function to use to attempt to parse
 	// response bodies to make data available for assertions.
