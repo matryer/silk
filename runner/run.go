@@ -145,6 +145,13 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	}
 	httpReq.URL.RawQuery = q.Encode()
 
+	// print request body
+	if bodyLen > 0 {
+		r.Verbose("```")
+		r.Verbose(req.Body.String())
+		r.Verbose("```")
+	}
+
 	// perform request
 	httpRes, err := r.DoRequest(httpReq)
 	if err != nil {

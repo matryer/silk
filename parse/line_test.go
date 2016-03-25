@@ -1,6 +1,7 @@
 package parse_test
 
 import (
+	"io/ioutil"
 	"testing"
 
 	"github.com/cheekybits/is"
@@ -115,4 +116,25 @@ func TestLineDetail(t *testing.T) {
 	detail := l.Detail()
 	is.Equal(detail.Key, "Key-Here")
 	is.Equal(detail.Value.Data, "Value")
+}
+
+func TestLinesReader(t *testing.T) {
+	is := is.New(t)
+
+	var lines parse.Lines
+
+	l, err := parse.ParseLine(0, []byte("Line one"))
+	is.NoErr(err)
+	lines = append(lines, l)
+	l, err = parse.ParseLine(1, []byte("Line two"))
+	is.NoErr(err)
+	lines = append(lines, l)
+	l, err = parse.ParseLine(2, []byte("Line three"))
+	is.NoErr(err)
+	lines = append(lines, l)
+
+	out, err := ioutil.ReadAll(lines.Reader())
+	is.NoErr(err)
+	is.Equal(string(out), `Line oneLine twoLine three`)
+
 }
