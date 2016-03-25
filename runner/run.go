@@ -46,11 +46,9 @@ type Runner struct {
 // root URL.
 func New(t T, URL string) *Runner {
 	return &Runner{
-		t:       t,
-		rootURL: URL,
-		DoRequest: func(r *http.Request) (*http.Response, error) {
-			return http.DefaultClient.Do(r)
-		},
+		t:         t,
+		rootURL:   URL,
+		DoRequest: http.DefaultClient.Do,
 		Log: func(s string) {
 			fmt.Println(s)
 		},
