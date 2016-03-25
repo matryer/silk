@@ -41,6 +41,17 @@ func TestRunFileSuccess(t *testing.T) {
 	is.False(subT.Failed())
 }
 
+// https://github.com/matryer/silk/issues/31
+func TestIssue31(t *testing.T) {
+	is := is.New(t)
+	subT := &testT{}
+	s := httptest.NewServer(testutil.EchoHandler())
+	defer s.Close()
+	r := runner.New(subT, s.URL)
+	r.RunFile("../testfiles/success/issue-31.silk.md")
+	is.False(subT.Failed())
+}
+
 func TestData(t *testing.T) {
 	is := is.New(t)
 	subT := &testT{}
