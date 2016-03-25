@@ -30,7 +30,7 @@ func parseDetail(b []byte, detailregex *regexp.Regexp) (*Detail, error) {
 }
 
 func (d *Detail) String() string {
-	valbytes, err := json.Marshal(d.Value)
+	valbytes, err := json.Marshal(d.Value.Data)
 	if err != nil {
 		return d.Key + ": " + fmt.Sprint(d.Value)
 	}
