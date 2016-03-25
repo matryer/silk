@@ -111,14 +111,12 @@ func (r *Runner) runGroup(group *parse.Group) {
 func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	m := string(req.Method)
 	p := string(req.Path)
+	absPath := r.rootURL + p
+	r.Verbose(string(req.Method), absPath)
 	var body io.Reader
 	if len(req.Body) > 0 {
 		body = req.Body.Reader()
 	}
-
-	absPath := r.rootURL + p
-	r.Verbose(string(req.Method), absPath)
-
 	// make request
 	httpReq, err := r.NewRequest(m, absPath, body)
 	if err != nil {
@@ -128,8 +126,10 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	}
 	// set body
 	bodyLen := len(req.Body.String())
-	httpReq.Header.Add("Content-Length", strconv.Itoa(bodyLen))
-	r.Verbose(indent, "Content-Length:", bodyLen)
+	if bodyLen > 0 {
+		httpReq.Header.Set("Content-Length", strconv.Itoa(bodyLen))
+		r.Verbose(indent, "Content-Length:", bodyLen)
+	}
 	// set request headers
 	for _, line := range req.Details {
 		detail := line.Detail()
@@ -182,6 +182,11 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 		r.log("failed to read body: ", err)
 		r.t.FailNow()
 		return
+	}
+	if len(actualBody) > 0 {
+		r.Verbose("```")
+		r.Verbose(string(actualBody))
+		r.Verbose("```")
 	}
 
 	// set the body as a field (see issue #15)
