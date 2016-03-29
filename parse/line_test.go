@@ -123,10 +123,10 @@ func TestLinesReader(t *testing.T) {
 
 	var lines parse.Lines
 
-	l, err := parse.ParseLine(0, []byte("Line one"))
+	l, err := parse.ParseLine(0, []byte("Line one "))
 	is.NoErr(err)
 	lines = append(lines, l)
-	l, err = parse.ParseLine(1, []byte("Line two"))
+	l, err = parse.ParseLine(1, []byte("Line two "))
 	is.NoErr(err)
 	lines = append(lines, l)
 	l, err = parse.ParseLine(2, []byte("Line three"))
@@ -135,6 +135,6 @@ func TestLinesReader(t *testing.T) {
 
 	out, err := ioutil.ReadAll(lines.Reader())
 	is.NoErr(err)
-	is.Equal(string(out), `Line oneLine twoLine three`)
+	is.Equal(string(out), `Line one Line two Line three`)
 
 }

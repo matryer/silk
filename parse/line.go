@@ -75,7 +75,8 @@ func (l Lines) String() string {
 	return string(l.Join())
 }
 
-// Reader gets an io.Reader that will read every line.
+// Reader makes a new io.Reader that will read the
+// bytes from every line.
 func (l Lines) Reader() io.Reader {
 	var readers []io.Reader
 	for _, line := range l {

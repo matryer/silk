@@ -103,7 +103,6 @@ func (r *Runner) RunGroup(groups ...*parse.Group) {
 }
 
 func (r *Runner) runGroup(group *parse.Group) {
-	//r.log("===", group.Filename+":", string(group.Title))
 	for _, req := range group.Requests {
 		r.runRequest(group, req)
 	}
@@ -128,8 +127,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	// set body
 	bodyLen := len(req.Body.String())
 	if bodyLen > 0 {
-		httpReq.Header.Set("Content-Length", strconv.Itoa(bodyLen))
-		r.Verbose(indent, "Content-Length:", bodyLen)
+		httpReq.ContentLength = int64(bodyLen)
 	}
 	// set request headers
 	for _, line := range req.Details {
@@ -149,10 +147,10 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	// print request body
 	if bodyLen > 0 {
 		r.Verbose("```")
-		r.Verbose(req.Body.String())
+		str, _ := ioutil.ReadAll(req.Body.Reader())
+		r.Verbose(string(str))
 		r.Verbose("```")
 	}
-
 	// perform request
 	httpRes, err := r.DoRequest(httpReq)
 	if err != nil {
