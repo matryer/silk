@@ -174,7 +174,7 @@ The `silk` command runs tests against an HTTP endpoint.
 Usage:
 
 ```
-silk -silk.url="{endpoint}" {testfiles}
+silk -silk.url="{endpoint}" "{testfiles}"
 ```
 
   * `{url}` the endpoint URL (e.g. `http://localhost:8080`)
@@ -183,7 +183,7 @@ silk -silk.url="{endpoint}" {testfiles}
 Notes:
 
   * Omit trailing slash from `url`
-  * `{testfiles}` can include a pattern (e.g. `/path/*.silk.md`)
+  * `{testfiles}` can include a pattern (e.g. `/path/*.silk.md`) but be sure to "quote" it
 
 ## Golang
 
