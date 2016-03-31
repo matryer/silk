@@ -63,7 +63,7 @@ func (l *Line) Detail() *Detail {
 
 type Lines []*Line
 
-func (l Lines) Join() []byte {
+func (l Lines) Bytes() []byte {
 	var lines [][]byte
 	for _, line := range l {
 		lines = append(lines, line.Bytes)
@@ -72,17 +72,13 @@ func (l Lines) Join() []byte {
 }
 
 func (l Lines) String() string {
-	return string(l.Join())
+	return string(l.Bytes())
 }
 
 // Reader makes a new io.Reader that will read the
 // bytes from every line.
 func (l Lines) Reader() io.Reader {
-	var readers []io.Reader
-	for _, line := range l {
-		readers = append(readers, bytes.NewReader(line.Bytes))
-	}
-	return io.MultiReader(readers...)
+	return bytes.NewReader(l.Bytes())
 }
 
 // Number gets the line number of the first line.

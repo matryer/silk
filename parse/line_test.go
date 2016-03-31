@@ -135,6 +135,8 @@ func TestLinesReader(t *testing.T) {
 
 	out, err := ioutil.ReadAll(lines.Reader())
 	is.NoErr(err)
-	is.Equal(string(out), `Line one Line two Line three`)
+	is.Equal(string(out), `Line one 
+Line two 
+Line three`)
 
 }

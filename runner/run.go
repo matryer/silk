@@ -125,7 +125,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 		return
 	}
 	// set body
-	bodyLen := len(req.Body.String())
+	bodyLen := len(req.Body.Bytes())
 	if bodyLen > 0 {
 		httpReq.ContentLength = int64(bodyLen)
 	}
@@ -147,8 +147,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	// print request body
 	if bodyLen > 0 {
 		r.Verbose("```")
-		str, _ := ioutil.ReadAll(req.Body.Reader())
-		r.Verbose(string(str))
+		r.Verbose(req.Body.String())
 		r.Verbose("```")
 	}
 	// perform request
@@ -194,7 +193,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	// assert the body
 	if len(req.ExpectedBody) > 0 {
 		// check body against expected body
-		if !r.assertBody(actualBody, req.ExpectedBody.Join()) {
+		if !r.assertBody(actualBody, req.ExpectedBody.Bytes()) {
 			r.fail(group, req, req.ExpectedBody.Number(), "- body doesn't match")
 			return
 		}
