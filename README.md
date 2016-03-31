@@ -177,12 +177,12 @@ Usage:
 silk -silk.url="{endpoint}" {testfiles...}
 ```
 
-  * `{url}` the endpoint URL (e.g. `http://localhost:8080`)
-  * `{testfiles}` list of test files (e.g. `./testfiles`)
+  * `{endpoint}` the endpoint URL (e.g. `http://localhost:8080`)
+  * `{testfiles}` list of test files (e.g. `./testfiles/one.silk.md ./testfiles/two.silk.md`)
 
 Notes:
 
-  * Omit trailing slash from `url`
+  * Omit trailing slash from `endpoint`
   * `{testfiles}` can include a pattern (e.g. `/path/*.silk.md`) as this is expended by most terminals to a list of matching files
 
 ## Golang
