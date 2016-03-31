@@ -3,26 +3,17 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
-	"os"
-	"path/filepath"
 	"testing"
 
 	"github.com/matryer/silk/runner"
 )
 
 var (
-	showVersion    = flag.Bool("version", false, "show version and exit")
-	url            = flag.String("silk.url", "", "(required) target url")
-	help           = flag.Bool("help", false, "show help")
-	root           string
-	defaultPattern string
+	showVersion = flag.Bool("version", false, "show version and exit")
+	url         = flag.String("silk.url", "", "(required) target url")
+	help        = flag.Bool("help", false, "show help")
+	paths       []string
 )
-
-func init() {
-	root = "."
-	defaultPattern = "*.silk.md"
-}
 
 func main() {
 	flag.Parse()
@@ -38,19 +29,7 @@ func main() {
 		fmt.Println("silk.url argument is required")
 		return
 	}
-	args := flag.Args()
-	if len(args) > 0 {
-		root = args[0]
-	}
-	info, err := os.Stat(root)
-	if err != nil {
-		log.Fatalln(err)
-		return
-	}
-	if info.IsDir() {
-		// add default pattern
-		root = filepath.Join(root, defaultPattern)
-	}
+	paths = flag.Args()
 	testing.Main(func(pat, str string) (bool, error) { return true, nil },
 		[]testing.InternalTest{{Name: "silk", F: testFunc}},
 		nil,
@@ -59,19 +38,15 @@ func main() {
 
 func testFunc(t *testing.T) {
 	r := runner.New(t, *url)
-	files, err := filepath.Glob(root)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println("running", len(files), "file(s)")
-	r.RunGlob(files, nil)
+	fmt.Println("running", len(paths), "file(s)")
+	r.RunGlob(paths, nil)
 }
 
 func printhelp() {
 	printversion()
-	fmt.Println("usage: silk [path/to/files/[pattern]]")
+	fmt.Println("usage: silk [file] [file2 [file3 [...]]")
+	fmt.Println("  e.g: silk ./test/*.silk.md")
 	flag.PrintDefaults()
-	fmt.Printf("\nBy default silk will run ./%s\n", defaultPattern)
 }
 
 func printversion() {

@@ -174,16 +174,16 @@ The `silk` command runs tests against an HTTP endpoint.
 Usage:
 
 ```
-silk -silk.url="{endpoint}" "{testfiles}"
+silk -silk.url="{endpoint}" {testfiles...}
 ```
 
   * `{url}` the endpoint URL (e.g. `http://localhost:8080`)
-  * `{testfiles}` path to test files (e.g. `./testfiles`)
+  * `{testfiles}` list of test files (e.g. `./testfiles`)
 
 Notes:
 
   * Omit trailing slash from `url`
-  * `{testfiles}` can include a pattern (e.g. `/path/*.silk.md`) but be sure to "quote" it
+  * `{testfiles}` can include a pattern (e.g. `/path/*.silk.md`) as this is expended by most terminals to a list of matching files
 
 ## Golang
 
