@@ -6,6 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -65,7 +66,11 @@ func New(t T, URL string) *Runner {
 		NewRequest: http.NewRequest,
 	}
 
-	// TODO: capture environment variables by default
+	// capture environment variables by default
+	for _, e := range os.Environ() {
+		pair := strings.Split(e, "=")
+		r.vars["$"+pair[0]] = parse.ParseValue([]byte(pair[1]))
+	}
 
 	return r
 }
@@ -196,6 +201,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 		r.t.FailNow()
 		return
 	}
+	actualBody = []byte(r.resolveVars(string(actualBody)))
 	if len(actualBody) > 0 {
 		r.Verbose("```")
 		r.Verbose(string(actualBody))

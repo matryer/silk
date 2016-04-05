@@ -3,6 +3,7 @@ package runner_test
 import (
 	"fmt"
 	"net/http/httptest"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -58,6 +59,7 @@ func TestCapturedVars(t *testing.T) {
 	subT := &testT{}
 	s := httptest.NewServer(testutil.EchoDataHandler())
 	defer s.Close()
+	os.Setenv("AppNameFromEnv", "Silk")
 	r := runner.New(subT, s.URL)
 	r.RunFile("../testfiles/success/captured-vars.silk.md")
 	is.False(subT.Failed())
