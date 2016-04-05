@@ -68,7 +68,7 @@ func New(t T, URL string) *Runner {
 	// capture environment variables by default
 	for _, e := range os.Environ() {
 		pair := strings.Split(e, "=")
-		r.vars["$"+pair[0]] = parse.ParseValue([]byte(pair[1]))
+		r.vars[pair[0]] = parse.ParseValue([]byte(pair[1]))
 	}
 	return r
 }
