@@ -112,6 +112,26 @@ You may also specify response headers in the same format as request headers:
 
 If any of the headers do not match, the test will fail.
 
+#### Capturing data (BETA)
+
+Silk allows you to capture values at the point of asserting them and reuse them in future requests and assertions. To capture a value, include a comment on the line that mentions a `{placeholder}`:
+
+```
+  * Data.UserID: /.*/ // The user's unique {id}.
+```
+
+The value from `UserID` will be stored in a variable called `id`, and you can refer to them later:
+
+```
+## GET /users/{id}
+```
+
+The above would then be a request to a real endpoint.
+
+#### Environment variables
+
+You can access environment variables inside Silk tests using the `{$NAME}` format, where `NAME` is the environment name.
+
 #### Asserting cookies
 
 To assert that a cookie is present in a response, make a regex assertion against the `Set-Cookie` HTTP header:
