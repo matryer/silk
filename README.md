@@ -27,7 +27,7 @@ Tests are made up of documents written in Markdown.
 * `* Field: value` - Lists describe headers and assertions
 * `* ?param=value` - Request parameters
 * `===` seperators break requests from responses
-* Comments (starting with `//`) are ignored
+* Comments (starting with `//`) allow you to capture variables
 * Plain text is ignored to allow you to add documentation
 * Inline back tics are ignored and are available for formatting
 
