@@ -13,19 +13,23 @@ var (
 
 // Line represents a single line.
 type Line struct {
-	Number int
-	Type   LineType
-	Bytes  []byte
-	Regexp *regexp.Regexp
-	detail *Detail
+	Number  int
+	Type    LineType
+	Bytes   []byte
+	Comment []byte
+	Regexp  *regexp.Regexp
+	detail  *Detail
 }
 
 // ParseLine makes a new Line with the given data.
 func ParseLine(n int, text []byte) (*Line, error) {
 	linetype := LineTypePlain
 	// trim off comments
+	var comment []byte
 	if bytes.Contains(text, commentPrefix) {
-		text = bytes.Split(text, commentPrefix)[0]
+		segs := bytes.Split(text, commentPrefix)
+		text = segs[0]
+		comment = segs[1]
 	}
 	var rx *regexp.Regexp
 	for _, item := range matchTypes {
@@ -45,11 +49,12 @@ func ParseLine(n int, text []byte) (*Line, error) {
 		}
 	}
 	return &Line{
-		Number: n,
-		Type:   linetype,
-		Bytes:  text,
-		Regexp: rx,
-		detail: d,
+		Number:  n,
+		Type:    linetype,
+		Bytes:   text,
+		Regexp:  rx,
+		Comment: comment,
+		detail:  d,
 	}, nil
 }
 
@@ -59,6 +64,21 @@ func (l *Line) String() string {
 
 func (l *Line) Detail() *Detail {
 	return l.detail
+}
+
+var placeholderRegexp = regexp.MustCompile(`{(.*)}`)
+
+// Capture extracts the first placeholder value from the
+// comments.
+func (l *Line) Capture() string {
+	if len(l.Comment) == 0 {
+		return ""
+	}
+	matches := placeholderRegexp.FindSubmatch(l.Comment)
+	if len(matches) < 2 {
+		return ""
+	}
+	return string(matches[1])
 }
 
 type Lines []*Line

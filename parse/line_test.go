@@ -27,6 +27,9 @@ func TestParseLine(t *testing.T) {
 		Src:  "## `POST /something`",
 		Type: parse.LineTypeRequest,
 	}, {
+		Src:  "## POST /echo",
+		Type: parse.LineTypeRequest,
+	}, {
 		Src:  "### Example request",
 		Type: parse.LineTypePlain,
 	}, {
@@ -83,6 +86,7 @@ func TestLineComments(t *testing.T) {
 	is := is.New(t)
 	l, err := parse.ParseLine(0, []byte(`* Key: "Value" // comments should be ignored`))
 	is.NoErr(err)
+	is.Equal(l.Comment, " comments should be ignored")
 	detail := l.Detail()
 	is.OK(detail)
 	is.Equal(detail.Key, "Key")
@@ -90,6 +94,12 @@ func TestLineComments(t *testing.T) {
 	l, err = parse.ParseLine(0, []byte(`* Key: "Value" // comments should be ignored`))
 	is.NoErr(err)
 	is.Equal(string(l.Bytes), `* Key: "Value"`)
+
+	// if the comment contains a {placeholder}, grab it
+	l, err = parse.ParseLine(0, []byte(`* Key: "Value" // will be stored as {id}`))
+	is.NoErr(err)
+	is.Equal(l.Comment, " will be stored as {id}")
+	is.Equal(l.Capture(), "id")
 }
 
 func TestLineParams(t *testing.T) {
