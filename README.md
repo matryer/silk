@@ -4,10 +4,10 @@
 
 Markdown based document-driven web API testing.
 
-  * Write nice looking Markdown documentation ([like this](https://github.com/matryer/silk/blob/master/testfiles/success/example.silk.md)), and then run it using the [silk command](#command-line)
-  * Simple and robust [Markdown API](#markdown-api)
-  * Comes with [real examples](https://github.com/matryer/silk/tree/master/testfiles/success) that you can copy (that are also part of the test suite for the project)
-  * 10% discount on [LightPaper markdown editor app](http://lightpaper.42squares.in) for Silk users: use `SILKTEST` code.
+* Write nice looking Markdown documentation ([like this](https://github.com/matryer/silk/blob/master/testfiles/success/example.silk.md)), and then run it using the [silk command](#command-line)
+* Simple and robust [Markdown API](#markdown-api)
+* Comes with [real examples](https://github.com/matryer/silk/tree/master/testfiles/success) that you can copy (that are also part of the test suite for the project)
+* 10% discount on [LightPaper markdown editor app](http://lightpaper.42squares.in) for Silk users: use `SILKTEST` code.
 
 ## Learn more
 
@@ -21,23 +21,23 @@ Markdown based document-driven web API testing.
 
 Tests are made up of documents written in Markdown.
 
-  * `# Group` - Top level headings represent groups of requests
-  * `## GET /path` -  Second level headings represent a request
-  * Code blocks with three back tics represent bodies
-  * `* Field: value` - Lists describe headers and assertions
-  * `* ?param=value` - Request parameters
-  * `===` seperators break requests from responses
-  * Comments (starting with `//`) are ignored
-  * Plain text is ignored to allow you to add documentation
-  * Inline back tics are ignored and are available for formatting
+* `# Group` - Top level headings represent groups of requests
+* `## GET /path` -  Second level headings represent a request
+* Code blocks with three back tics represent bodies
+* `* Field: value` - Lists describe headers and assertions
+* `* ?param=value` - Request parameters
+* `===` seperators break requests from responses
+* Comments (starting with `//`) are ignored
+* Plain text is ignored to allow you to add documentation
+* Inline back tics are ignored and are available for formatting
 
 ### Document structure
 
 A document is made up of:
 
-  * A request
-  * `===` seperator
-  * Assertions
+* A request
+* `===` seperator
+* Assertions
 
 ### Requests
 
@@ -93,21 +93,21 @@ Setting cookies on a request can be done using the [HTTP header](https://en.wiki
 * Cookie: "key=value"
 ```
 
-  * See [asserting cookies](#asserting-cookies).
+* See [asserting cookies](#asserting-cookies).
 
 ### Assertions
 
 Following the `===` separator, you can specify assertions about the response. At a minimum, it is recommended that you assert the status code to ensure the request succeeded:
 
 ```
-  * Status: 200
+* Status: 200
 ```
 
 You may also specify response headers in the same format as request headers:
 
 ```
-  * Content-Type: "application/json"
-  * X-MyServer-Version: "v1.0"
+* Content-Type: "application/json"
+* X-MyServer-Version: "v1.0"
 ```
 
 If any of the headers do not match, the test will fail.
@@ -117,7 +117,7 @@ If any of the headers do not match, the test will fail.
 Silk allows you to capture values at the point of asserting them and reuse them in future requests and assertions. To capture a value, include a comment on the line that mentions a `{placeholder}`:
 
 ```
-  * Data.UserID: /.*/ // The user's unique {id}.
+* Data.UserID: /.*/ // The user's unique {id}.
 ```
 
 The value from `UserID` (e.g. `123`) will be stored in a variable called `id`, and you can refer to it later:
@@ -137,10 +137,10 @@ You can access environment variables inside Silk tests using the `{$NAME}` forma
 To assert that a cookie is present in a response, make a regex assertion against the `Set-Cookie` HTTP header:
 
 ```
-  * Set-Cookie: /key=value/
+* Set-Cookie: /key=value/
 ```
 
-  * All cookie strings are present in a single `Set-Cookie` seperated by a pipe character.
+* All cookie strings are present in a single `Set-Cookie` seperated by a pipe character.
 
 #### Validating data
 
@@ -153,39 +153,39 @@ You can optionally include a verbatim body using code blocks surrounded by three
 You may also make any number of regex assertions against the body using the `Body` object:
 
 ```
-  * Body: /Hello world/
-  * Body: /This should be found too/
-  * Body: /and this/
+* Body: /Hello world/
+* Body: /This should be found too/
+* Body: /and this/
 ```
 
 Alternatively, you can specify a list (using `*`) of data fields to assert accessible via the `Data` object:
 
 ```
-  * Status: 201
-  * Content-Type: "application/json"
-  * Data.name: "Silk"
-  * Data.release_year: 2016
-  * Data.tags[0]: "testing"
-  * Data.tags[1]: "markdown"
-  * Data[0].name: "Mat"
-  * Data[1].name: "David"
+* Status: 201
+* Content-Type: "application/json"
+* Data.name: "Silk"
+* Data.release_year: 2016
+* Data.tags[0]: "testing"
+* Data.tags[1]: "markdown"
+* Data[0].name: "Mat"
+* Data[1].name: "David"
 ```
 
-  * NOTE: Currenly this feature is only supported for JSON APIs.
+* NOTE: Currenly this feature is only supported for JSON APIs.
 
 #### Regex
 
 Values may be regex, if they begin and end with a forward slash: `/`. The assertion will pass if the value (after being turned into a string) matches the regex.
 
 ```
-  * Status: /^2.{2}$/
-  * Content-Type: /application/json/
+* Status: /^2.{2}$/
+* Content-Type: /application/json/
 ```
 
 The above will assert that:
 
-  * The status looks like `2xx`, and
-  * The `Content-Type` contains `application/json`
+* The status looks like `2xx`, and
+* The `Content-Type` contains `application/json`
 
 ## Command line
 
@@ -197,13 +197,13 @@ Usage:
 silk -silk.url="{endpoint}" {testfiles...}
 ```
 
-  * `{endpoint}` the endpoint URL (e.g. `http://localhost:8080`)
-  * `{testfiles}` list of test files (e.g. `./testfiles/one.silk.md ./testfiles/two.silk.md`)
+* `{endpoint}` the endpoint URL (e.g. `http://localhost:8080`)
+* `{testfiles}` list of test files (e.g. `./testfiles/one.silk.md ./testfiles/two.silk.md`)
 
 Notes:
 
-  * Omit trailing slash from `endpoint`
-  * `{testfiles}` can include a pattern (e.g. `/path/*.silk.md`) as this is expended by most terminals to a list of matching files
+* Omit trailing slash from `endpoint`
+* `{testfiles}` can include a pattern (e.g. `/path/*.silk.md`) as this is expended by most terminals to a list of matching files
 
 ## Golang
 
@@ -227,9 +227,9 @@ func TestAPIEndpoint(t *testing.T) {
 }
 ```
 
-  * See the [documentation for the silk/runner package](https://godoc.org/github.com/matryer/silk/runner)
+* See the [documentation for the silk/runner package](https://godoc.org/github.com/matryer/silk/runner)
 
 ## Credit
 
-  * Special thanks to [@dahernan](https://github.com/dahernan) for his contributions and criticisms of Silk
-  * Silk logo by [Chris Ryer](http://chrisryer.co.uk)
+* Special thanks to [@dahernan](https://github.com/dahernan) for his contributions and criticisms of Silk
+* Silk logo by [Chris Ryer](http://chrisryer.co.uk)
