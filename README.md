@@ -120,13 +120,13 @@ Silk allows you to capture values at the point of asserting them and reuse them 
   * Data.UserID: /.*/ // The user's unique {id}.
 ```
 
-The value from `UserID` will be stored in a variable called `id`, and you can refer to them later:
+The value from `UserID` (e.g. `123`) will be stored in a variable called `id`, and you can refer to it later:
 
 ```
 ## GET /users/{id}
 ```
 
-The above would then be a request to a real endpoint.
+The above would be a request to `GET /users/123`.
 
 #### Environment variables
 
