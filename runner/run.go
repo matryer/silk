@@ -29,6 +29,7 @@ type T interface {
 type Runner struct {
 	t       T
 	rootURL string
+	vars    map[string]*parse.Value
 	// DoRequest makes the request and returns the response.
 	// By default uses http.DefaultClient.Do.
 	DoRequest func(r *http.Request) (*http.Response, error)
@@ -46,9 +47,10 @@ type Runner struct {
 // New makes a new Runner with the given testing T target and the
 // root URL.
 func New(t T, URL string) *Runner {
-	return &Runner{
+	r := &Runner{
 		t:         t,
 		rootURL:   URL,
+		vars:      make(map[string]*parse.Value),
 		DoRequest: http.DefaultClient.Do,
 		Log: func(s string) {
 			fmt.Println(s)
@@ -62,6 +64,10 @@ func New(t T, URL string) *Runner {
 		ParseBody:  ParseJSONBody,
 		NewRequest: http.NewRequest,
 	}
+
+	// TODO: capture environment variables by default
+
+	return r
 }
 
 func (r *Runner) log(args ...interface{}) {
@@ -111,11 +117,14 @@ func (r *Runner) runGroup(group *parse.Group) {
 func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	m := string(req.Method)
 	p := string(req.Path)
-	absPath := r.rootURL + p
+	absPath := r.resolveVars(r.rootURL + p)
+	m = r.resolveVars(m)
 	r.Verbose(string(req.Method), absPath)
 	var body io.Reader
+	var bodyStr string
 	if len(req.Body) > 0 {
-		body = req.Body.Reader()
+		bodyStr = r.resolveVars(req.Body.String())
+		body = strings.NewReader(bodyStr)
 	}
 	// make request
 	httpReq, err := r.NewRequest(m, absPath, body)
@@ -125,22 +134,28 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 		return
 	}
 	// set body
-	bodyLen := len(req.Body.Bytes())
+	bodyLen := len(bodyStr)
 	if bodyLen > 0 {
 		httpReq.ContentLength = int64(bodyLen)
 	}
 	// set request headers
 	for _, line := range req.Details {
 		detail := line.Detail()
+		val := fmt.Sprintf("%v", detail.Value.Data)
+		val = r.resolveVars(val)
+		detail.Value = parse.ParseValue([]byte(val))
 		r.Verbose(indent, detail.String())
-		httpReq.Header.Add(detail.Key, fmt.Sprintf("%v", detail.Value.Data))
+		httpReq.Header.Add(detail.Key, val)
 	}
 	// set parameters
 	q := httpReq.URL.Query()
 	for _, line := range req.Params {
 		detail := line.Detail()
+		val := fmt.Sprintf("%v", detail.Value.Data)
+		val = r.resolveVars(val)
+		detail.Value = parse.ParseValue([]byte(val))
 		r.Verbose(indent, detail.String())
-		q.Add(detail.Key, fmt.Sprintf("%v", detail.Value.Data))
+		q.Add(detail.Key, val)
 	}
 	httpReq.URL.RawQuery = q.Encode()
 
@@ -190,10 +205,16 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	// set the body as a field (see issue #15)
 	responseDetails["Body"] = string(actualBody)
 
+	/*
+		Assertions
+		---------------------------------------------------------
+	*/
+
 	// assert the body
 	if len(req.ExpectedBody) > 0 {
 		// check body against expected body
-		if !r.assertBody(actualBody, req.ExpectedBody.Bytes()) {
+		exp := r.resolveVars(req.ExpectedBody.String())
+		if !r.assertBody(actualBody, []byte(exp)) {
 			r.fail(group, req, req.ExpectedBody.Number(), "- body doesn't match")
 			return
 		}
@@ -206,6 +227,17 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	if len(req.ExpectedDetails) > 0 {
 		for _, line := range req.ExpectedDetails {
 			detail := line.Detail()
+
+			// capture any vars (// e.g. {placeholder})
+			if capture := line.Capture(); len(capture) > 0 {
+				r.vars[capture] = detail.Value
+				r.Verbose("captured", capture, "=", detail.Value)
+			}
+			// resolve any variables mentioned in this detail value
+			if detail.Value.Type() == "string" {
+				detail.Value.Data = r.resolveVars(detail.Value.Data.(string))
+			}
+
 			if strings.HasPrefix(detail.Key, "Data") {
 				parseDataOnce.Do(func() {
 					data, errData = r.ParseBody(bytes.NewReader(actualBody))
@@ -230,6 +262,14 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 		}
 	}
 
+}
+
+func (r *Runner) resolveVars(s string) string {
+	for k, v := range r.vars {
+		match := "{" + k + "}"
+		s = strings.Replace(s, match, fmt.Sprintf("%v", v.Data), -1)
+	}
+	return s
 }
 
 func (r *Runner) fail(group *parse.Group, req *parse.Request, line int, args ...interface{}) {
