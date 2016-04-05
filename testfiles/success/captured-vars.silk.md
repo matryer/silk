@@ -22,7 +22,7 @@
 * `Data.body.release_year`: `2016`
 * `Data.body.exp`: `200` // Expected {value}
 
-## POST /echo
+## POST /echo/{status}
 
 * ?status={status}
 * X-Status: {status}
@@ -41,6 +41,6 @@
 * `Data.body.st`: {status}
 
 ```
-{"Accept-Encoding":"gzip","Content-Length":"16","User-Agent":"Go-http-client/1.1","X-Status":"awesome","body":{"st":"awesome"},"bodystr":"{\"st\":\"awesome\"}","method":"POST","path":"/echo","status":["awesome"]}
+{"Accept-Encoding":"gzip","Content-Length":"16","User-Agent":"Go-http-client/1.1","X-Status":"awesome","body":{"st":"awesome"},"bodystr":"{\"st\":\"awesome\"}","method":"POST","path":"/echo/awesome","status":["awesome"]}
 
 ```
