@@ -165,7 +165,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	// print request body
 	if bodyLen > 0 {
 		r.Verbose("```")
-		r.Verbose(req.Body.String())
+		r.Verbose(bodyStr)
 		r.Verbose("```")
 	}
 	// perform request
@@ -323,6 +323,10 @@ func (r *Runner) assertData(line *parse.Line, data interface{}, errData error, k
 		r.log(key, fmt.Sprintf("expected %s: %s  actual: (missing)", expected.Type(), expected))
 		return false
 	}
+	// capture any vars (// e.g. {placeholder})
+	if capture := line.Capture(); len(capture) > 0 {
+		r.capture(capture, actual)
+	}
 	if !ok && expected.Data == nil {
 		return true
 	}
@@ -334,10 +338,6 @@ func (r *Runner) assertData(line *parse.Line, data interface{}, errData error, k
 			r.log(key, fmt.Sprintf("expected %s: %s  actual %T: %s", expected.Type(), expected, actual, actualVal))
 		}
 		return false
-	}
-	// capture any vars (// e.g. {placeholder})
-	if capture := line.Capture(); len(capture) > 0 {
-		r.capture(capture, actual)
 	}
 	return true
 }
