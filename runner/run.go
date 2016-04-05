@@ -201,7 +201,6 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 		r.t.FailNow()
 		return
 	}
-	actualBody = []byte(r.resolveVars(string(actualBody)))
 	if len(actualBody) > 0 {
 		r.Verbose("```")
 		r.Verbose(string(actualBody))
