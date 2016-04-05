@@ -14,13 +14,13 @@
 ### Response
 
 * `Server`: `"EchoDataHandler"`
-* `Status`: `200`
+* `Status`: `200` // Expected {value}
 * `Data.body.name`: `"Silk"`
-* `Data.body.status`: `"awesome"` // The {status} of Silk.
+* `Data.body.status`: /awesome/ // The {status} of Silk.
 * `Data.body.a_bool`: `true`
 * `Data.body.nothing`: `null`
 * `Data.body.release_year`: `2016`
-* `Data.body.exp`: `200` // Expected {value}
+* `Data.body.exp`: `200`
 
 ## POST /echo/{status}
 

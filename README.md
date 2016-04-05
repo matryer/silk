@@ -128,6 +128,8 @@ The value from `UserID` (e.g. `123`) will be stored in a variable called `id`, a
 
 The above would be a request to `GET /users/123`.
 
+  * Captured values are only available when assertions are successful
+
 #### Environment variables
 
 You can access environment variables inside Silk tests using the `{$NAME}` format, where `NAME` is the environment name.

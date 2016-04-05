@@ -232,22 +232,15 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	if len(req.ExpectedDetails) > 0 {
 		for _, line := range req.ExpectedDetails {
 			detail := line.Detail()
-
-			// capture any vars (// e.g. {placeholder})
-			if capture := line.Capture(); len(capture) > 0 {
-				r.vars[capture] = detail.Value
-				r.Verbose("captured", capture, "=", detail.Value)
-			}
 			// resolve any variables mentioned in this detail value
 			if detail.Value.Type() == "string" {
 				detail.Value.Data = r.resolveVars(detail.Value.Data.(string))
 			}
-
 			if strings.HasPrefix(detail.Key, "Data") {
 				parseDataOnce.Do(func() {
 					data, errData = r.ParseBody(bytes.NewReader(actualBody))
 				})
-				if !r.assertData(data, errData, detail.Key, detail.Value) {
+				if !r.assertData(line, data, errData, detail.Key, detail.Value) {
 					r.fail(group, req, line.Number, "- "+detail.Key+" doesn't match")
 					return
 				}
@@ -260,7 +253,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 				r.fail(group, req, line.Number, "- "+detail.Key+" doesn't match")
 				return
 			}
-			if !r.assertDetail(detail.Key, actual, detail.Value) {
+			if !r.assertDetail(line, detail.Key, actual, detail.Value) {
 				r.fail(group, req, line.Number, "- "+detail.Key+" doesn't match")
 				return
 			}
@@ -299,7 +292,7 @@ func (r *Runner) assertBody(actual, expected []byte) bool {
 	return true
 }
 
-func (r *Runner) assertDetail(key string, actual interface{}, expected *parse.Value) bool {
+func (r *Runner) assertDetail(line *parse.Line, key string, actual interface{}, expected *parse.Value) bool {
 	if !expected.Equal(actual) {
 		actualVal := parse.ParseValue([]byte(fmt.Sprintf("%v", actual)))
 
@@ -311,10 +304,14 @@ func (r *Runner) assertDetail(key string, actual interface{}, expected *parse.Va
 
 		return false
 	}
+	// capture any vars (// e.g. {placeholder})
+	if capture := line.Capture(); len(capture) > 0 {
+		r.capture(capture, actual)
+	}
 	return true
 }
 
-func (r *Runner) assertData(data interface{}, errData error, key string, expected *parse.Value) bool {
+func (r *Runner) assertData(line *parse.Line, data interface{}, errData error, key string, expected *parse.Value) bool {
 	if errData != nil {
 		r.log(key, fmt.Sprintf("expected %s: %s  actual: failed to parse body: %s", expected.Type(), expected, errData))
 		return false
@@ -340,5 +337,14 @@ func (r *Runner) assertData(data interface{}, errData error, key string, expecte
 		}
 		return false
 	}
+	// capture any vars (// e.g. {placeholder})
+	if capture := line.Capture(); len(capture) > 0 {
+		r.capture(capture, actual)
+	}
 	return true
+}
+
+func (r *Runner) capture(key string, val interface{}) {
+	r.vars[key] = &parse.Value{Data: val}
+	r.Verbose("captured", key, "=", val)
 }
