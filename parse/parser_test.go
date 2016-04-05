@@ -67,16 +67,3 @@ func TestParser(t *testing.T) {
 	is.Equal(len(group.Requests), 1)
 
 }
-
-// https://github.com/matryer/silk/issues/32
-func TestIssue32(t *testing.T) {
-	is := is.New(t)
-
-	groups, err := parse.ParseFile("../testfiles/success/issue-32.silk.md")
-	is.NoErr(err)
-	is.Equal(1, len(groups))
-
-	group := groups[0]
-	is.Equal(2, len(group.Requests))
-
-}
