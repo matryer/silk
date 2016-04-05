@@ -11,6 +11,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/matryer/m"
 	"github.com/matryer/silk/parse"
@@ -206,7 +207,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	if len(req.ExpectedDetails) > 0 {
 		for _, line := range req.ExpectedDetails {
 			detail := line.Detail()
-			if strings.HasPrefix(detail.Key, "Data") {
+			if strings.HasPrefix(detail.Key, "Data") || strings.HasSuffix(detail.Key, ".length") {
 				parseDataOnce.Do(func() {
 					data, errData = r.ParseBody(bytes.NewReader(actualBody))
 				})
@@ -278,7 +279,23 @@ func (r *Runner) assertData(data interface{}, errData error, key string, expecte
 		r.log(key, fmt.Sprintf("expected %s: %s  actual: no data", expected.Type(), expected))
 		return false
 	}
+
 	actual, ok := m.GetOK(map[string]interface{}{"Data": data}, key)
+
+	if strings.HasSuffix(key, ".length") {
+		key = strings.Replace(key, ".length", "", 1)
+		actual, ok = m.GetOK(map[string]interface{}{"Data": data}, key)
+
+		if ok {
+			if slice, _ok := actual.([]interface{}); _ok {
+				actual = float64(len(slice))
+			}
+			if str, _ok := actual.(string); _ok {
+				actual = float64(utf8.RuneCountInString(str))
+			}
+		}
+	}
+
 	if !ok && expected.Data != nil {
 		r.log(key, fmt.Sprintf("expected %s: %s  actual: (missing)", expected.Type(), expected))
 		return false
