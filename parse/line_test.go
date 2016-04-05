@@ -27,6 +27,9 @@ func TestParseLine(t *testing.T) {
 		Src:  "## `POST /something`",
 		Type: parse.LineTypeRequest,
 	}, {
+		Src:  "## POST /echo",
+		Type: parse.LineTypeRequest,
+	}, {
 		Src:  "### Example request",
 		Type: parse.LineTypePlain,
 	}, {

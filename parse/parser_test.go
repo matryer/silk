@@ -72,11 +72,11 @@ func TestParser(t *testing.T) {
 func TestIssue32(t *testing.T) {
 	is := is.New(t)
 
-	groupSet, err := parse.ParseFile("../testfiles/success/issue-32.silk.md")
+	groups, err := parse.ParseFile("../testfiles/success/issue-32.silk.md")
 	is.NoErr(err)
-	is.Equal(1, len(groupSet.Groups))
+	is.Equal(1, len(groups))
 
-	group := groupSet.Groups[0]
+	group := groups[0]
 	is.Equal(2, len(group.Requests))
 
 }
