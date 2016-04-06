@@ -2,6 +2,7 @@ package runner
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -217,7 +218,18 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	if len(req.ExpectedBody) > 0 {
 		// check body against expected body
 		exp := r.resolveVars(req.ExpectedBody.String())
-		if !r.assertBody(actualBody, []byte(exp)) {
+		// check JSON for deep equality (avoids checking diffs in white space and order)
+		// check string for equality
+		if req.ExpectedBodyType == "json" {
+			var expectedJSON interface{}
+			var actualJSON interface{}
+			json.Unmarshal([]byte(exp), &expectedJSON)
+			json.Unmarshal(actualBody, &actualJSON)
+			if !reflect.DeepEqual(actualJSON, expectedJSON) {
+				r.fail(group, req, req.ExpectedBody.Number(), "- body doesn't match")
+				return
+			}
+		} else if !r.assertBody(actualBody, []byte(exp)) {
 			r.fail(group, req, req.ExpectedBody.Number(), "- body doesn't match")
 			return
 		}
