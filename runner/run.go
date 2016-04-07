@@ -218,13 +218,16 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	if len(req.ExpectedBody) > 0 {
 		// check body against expected body
 		exp := r.resolveVars(req.ExpectedBody.String())
-		/*
-			depending on the expectedBodyType:
-			json(mode=subset): check if expectedBody as JSON is a subset of the actualBody as json
-			json*: check JSON for deep equality (avoids checking diffs in white space and order)
-			*: check string for equality
-		*/
-		if strings.HasPrefix(req.ExpectedBodyType, "json") {
+
+		// depending on the expectedBodyType:
+		// json*: check JSON for deep equality (avoids checking diffs in white space and order)
+		// json(mode=subset): check if expectedBody as JSON is a subset of the actualBody as json
+		// json(mode=exact): check string for verbatim equality
+		// *: check string for verbatim equality
+
+		expectedTypeIsJSON := strings.HasPrefix(req.ExpectedBodyType, "json")
+		modeIsExact := strings.Contains(req.ExpectedBodyType, "mode=exact")
+		if expectedTypeIsJSON && !modeIsExact {
 			// decode json from string
 			var expectedJSON interface{}
 			var actualJSON interface{}
