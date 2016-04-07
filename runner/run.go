@@ -220,8 +220,8 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 		exp := r.resolveVars(req.ExpectedBody.String())
 
 		// depending on the expectedBodyType:
-		// json*: check JSON for deep equality (avoids checking diffs in white space and order)
-		// json(mode=subset): check if expectedBody as JSON is a subset of the actualBody as json
+		// json*: check if expectedBody as JSON is a subset of the actualBody as json
+		// json(mode=same): check JSON for deep equality (avoids checking diffs in white space and order)
 		// json(mode=exact): check string for verbatim equality
 		// *: check string for verbatim equality
 
@@ -234,7 +234,7 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 			json.Unmarshal([]byte(exp), &expectedJSON)
 			json.Unmarshal(actualBody, &actualJSON)
 
-			if strings.Contains(req.ExpectedBodyType, "subset") {
+			if !strings.Contains(req.ExpectedBodyType, "same") {
 				eq, err := r.assertJSONIsEqualOrSubset(expectedJSON, actualJSON)
 				if !eq {
 					r.fail(group, req, req.ExpectedBody.Number(), "- body doesn't match", err)
@@ -384,7 +384,7 @@ func (r *Runner) assertJSONIsEqualOrSubset(v1 interface{}, v2 interface{}) (bool
 		v2map := v2.(map[string]interface{})
 		for objK, objV := range v1.(map[string]interface{}) {
 			if v2map[objK] == nil {
-				return false, fmt.Errorf("missing key %s", objK)
+				return false, fmt.Errorf("missing key '%s'", objK)
 			}
 			equalForKey, errForKey := r.assertJSONIsEqualOrSubset(objV, v2map[objK])
 			if !equalForKey {

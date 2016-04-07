@@ -9,33 +9,6 @@ The server echos the request's body directly.
 ### Example request
 
 ```json
-{ "name": "Mat", "meta" : { "client" : "tester" } }
-```
-
-===
-
-### Example response
-
-* `Status`: `200`
-
-Use the json qualifier in your expected request body to allow differences in order and white space.
-
-```json
-{
-  "comment": "Good work",
-  "name":    "Mat",
-  "meta" : {
-    "client" : "tester"
-  }
-}
-```
-## `GET /json/subset`
-
-Create a comment.
-
-### Example request
-
-```json
 { "name": "Mat",  "comment": "Good work", "meta" : { "api" : 1.0 } }
 ```
 
@@ -45,13 +18,41 @@ Create a comment.
 
 * `Status`: `200`
 
-Use the `json(mode=subset)` qualifier in your expected request body to only check for
+By defaul using the `json` qualifier in your expected request body only checks for
 a subset of the response. This allows you to scope your tests or to be more lenient
-towards future unrelated changes.
+towards future unrelated changes. Additional fields in the response do not invalidate
+the test.
 
-```json(mode=subset)
+```json
 {
   "name":    "Mat",
   "meta" : { "client" : "tester" }
+}
+```
+
+## `GET /json/same`
+
+### Example request
+
+```json
+{ "name": "Mat", "meta" : { "client" : "tester" } }
+```
+
+===
+
+### Example response
+
+* `Status`: `200`
+
+Use the `json(mode=same)` qualifier in your expected request body to ensure that the json object are the same.
+This allows differences in order and white space.
+
+```json(mode=same)
+{
+  "comment": "Good work",
+  "name":    "Mat",
+  "meta" : {
+    "client" : "tester"
+  }
 }
 ```
