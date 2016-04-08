@@ -38,7 +38,7 @@ func main() {
 
 func testFunc(t *testing.T) {
 	r := runner.New(t, *url)
-	fmt.Println("running", len(paths), "file(s)")
+	fmt.Println("running", len(paths), "file(s)...")
 	r.RunGlob(paths, nil)
 }
 
