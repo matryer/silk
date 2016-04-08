@@ -149,8 +149,23 @@ To assert that a cookie is present in a response, make a regex assertion against
 You can optionally include a verbatim body using code blocks surrounded by three back tics. If the response body does not exactly match, the test will fail:
 
     ```
-    {"id": 1, "name": "Silk", "release_year": 2016}
+    Hello world!
     ```
+
+You can flag expected response bodies as `json` directly after the three back tics. 
+This will assert that the actual response contains the same value for each expected key (recursively)
+allowing for differences in whitespace and ordering as well as being lenient towards additional (unexpected) keys in the response. 
+
+    ```json
+    {
+        "id": 1, 
+        "release_year": 2016,
+        "name": "Silk"
+    }
+    ```
+
+You can use the flag `json(mode=same)` to enforce that no additional fields may be present while still allowing for differences in whitespace and key order.
+Finally `json(mode=exact)` matches the expected body verbatim.
 
 You may also make any number of regex assertions against the body using the `Body` object:
 
