@@ -373,7 +373,13 @@ func (r *Runner) assertData(line *parse.Line, data interface{}, errData error, k
 // or if both are maps (of type map[string]interface{}) and v1 is a subset of v2, where
 // all keys that are present in v1 are present with the same value in v2.
 func (r *Runner) assertJSONIsEqualOrSubset(v1 interface{}, v2 interface{}) (bool, error) {
-	if reflect.ValueOf(v1).Type() != reflect.ValueOf(v2).Type() {
+	if (v1 == nil) && (v2 == nil) {
+		return true, nil
+	}
+
+	// check if both are non nil and that type matches
+	if ((v1 == nil) != (v2 == nil)) ||
+		(reflect.ValueOf(v1).Type() != reflect.ValueOf(v2).Type()) {
 		return false, fmt.Errorf("types do not match")
 	}
 
