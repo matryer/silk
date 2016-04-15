@@ -65,6 +65,18 @@ func TestCapturedVars(t *testing.T) {
 	is.False(subT.Failed())
 }
 
+// https://github.com/matryer/silk/issues/37
+func TestStandardSeparator(t *testing.T) {
+	is := is.New(t)
+	subT := &testT{}
+	s := httptest.NewServer(testutil.EchoHandler())
+	defer s.Close()
+	os.Setenv("$AppNameFromEnv", "Silk")
+	r := runner.New(subT, s.URL)
+	r.RunFile("../testfiles/success/issue-37.silk.md")
+	is.False(subT.Failed())
+}
+
 func TestData(t *testing.T) {
 	is := is.New(t)
 	subT := &testT{}
