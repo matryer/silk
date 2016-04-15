@@ -26,7 +26,7 @@ Tests are made up of documents written in Markdown.
 * Code blocks with three back tics represent bodies
 * `* Field: value` - Lists describe headers and assertions
 * `* ?param=value` - Request parameters
-* `===` seperators break requests from responses
+* `---` seperators break requests from responses
 * Comments (starting with `//`) allow you to capture variables
 * Plain text is ignored to allow you to add documentation
 * Inline back tics are ignored and are available for formatting
@@ -36,7 +36,7 @@ Tests are made up of documents written in Markdown.
 A document is made up of:
 
 * A request
-* `===` seperator
+* `---` seperator
 * Assertions
 
 ### Requests
@@ -97,7 +97,7 @@ Setting cookies on a request can be done using the [HTTP header](https://en.wiki
 
 ### Assertions
 
-Following the `===` separator, you can specify assertions about the response. At a minimum, it is recommended that you assert the status code to ensure the request succeeded:
+Following the `---` separator, you can specify assertions about the response. At a minimum, it is recommended that you assert the status code to ensure the request succeeded:
 
 ```
 * Status: 200
