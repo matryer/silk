@@ -150,3 +150,17 @@ Line two
 Line three`)
 
 }
+
+func TestLinesReaderMutableBytes(t *testing.T) {
+	is := is.New(t)
+
+	lineText := "This line shouldn't change after parsing"
+	mutableData := []byte(lineText)
+
+	l, err := parse.ParseLine(0, mutableData)
+	is.NoErr(err)
+
+	mutableData[5] = 'w'
+
+	is.Equal(lineText, string(l.Bytes))
+}
