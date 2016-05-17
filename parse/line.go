@@ -22,10 +22,12 @@ type Line struct {
 }
 
 // ParseLine makes a new Line with the given data.
-func ParseLine(n int, text []byte) (*Line, error) {
+func ParseLine(n int, unsafeText []byte) (*Line, error) {
 	linetype := LineTypePlain
 	// trim off comments
 	var comment []byte
+	text := make([]byte, len(unsafeText))
+	copy(text, unsafeText)
 	if bytes.Contains(text, commentPrefix) {
 		segs := bytes.Split(text, commentPrefix)
 		text = segs[0]
