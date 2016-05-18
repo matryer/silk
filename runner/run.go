@@ -221,20 +221,18 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 
 		// depending on the expectedBodyType:
 		// json*: check if expectedBody as JSON is a subset of the actualBody as json
-		// json(mode=same): check JSON for deep equality (avoids checking diffs in white space and order)
-		// json(mode=exact): check string for verbatim equality
+		// json(exact): check JSON for deep equality (avoids checking diffs in white space and order)
 		// *: check string for verbatim equality
 
 		expectedTypeIsJSON := strings.HasPrefix(req.ExpectedBodyType, "json")
-		modeIsExact := strings.Contains(req.ExpectedBodyType, "mode=exact")
-		if expectedTypeIsJSON && !modeIsExact {
+		if expectedTypeIsJSON {
 			// decode json from string
 			var expectedJSON interface{}
 			var actualJSON interface{}
 			json.Unmarshal([]byte(exp), &expectedJSON)
 			json.Unmarshal(actualBody, &actualJSON)
 
-			if !strings.Contains(req.ExpectedBodyType, "same") {
+			if !strings.Contains(req.ExpectedBodyType, "exact") {
 				eq, err := r.assertJSONIsEqualOrSubset(expectedJSON, actualJSON)
 				if !eq {
 					r.fail(group, req, req.ExpectedBody.Number(), "- body doesn't match", err)

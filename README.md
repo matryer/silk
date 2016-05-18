@@ -152,9 +152,9 @@ You can optionally include a verbatim body using code blocks surrounded by three
     Hello world!
     ```
 
-You can flag expected response bodies as `json` directly after the three back tics. 
+You can flag expected response bodies as `json` directly after the three back tics.
 This will assert that the actual response contains the same value for each expected key (recursively)
-allowing for differences in whitespace and ordering as well as being lenient towards additional (unexpected) keys in the response. 
+allowing for differences in whitespace and ordering as well as being lenient towards additional (unexpected) keys in the response.
 
     ```json
     {
@@ -164,8 +164,7 @@ allowing for differences in whitespace and ordering as well as being lenient tow
     }
     ```
 
-You can use the flag `json(mode=same)` to enforce that no additional fields may be present while still allowing for differences in whitespace and key order.
-Finally `json(mode=exact)` matches the expected body verbatim.
+You can use the flag `json(strict)` to enforce that no additional fields may be present while still allowing for differences in whitespace and key order.
 
 You may also make any number of regex assertions against the body using the `Body` object:
 

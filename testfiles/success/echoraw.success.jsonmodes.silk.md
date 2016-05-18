@@ -44,10 +44,10 @@ the test.
 
 * `Status`: `200`
 
-Use the `json(mode=same)` qualifier in your expected request body to ensure that the json object are the same.
+Use the `json(strict)` qualifier in your expected request body to ensure that the json object are the same.
 This allows differences in order and white space.
 
-```json
+```json(strict)
 {
   "comment": "Good work",
   "name":    "Mat",
