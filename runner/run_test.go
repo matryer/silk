@@ -96,7 +96,7 @@ func TestFailureNonTrimmedExpection(t *testing.T) {
 
 	is.True(strings.Contains(logstr, `Data.body.status expected: "awesome"  actual: " awesome"`))
 	is.True(strings.Contains(logstr, "--- FAIL: GET /echo"))
-	is.True(strings.Contains(logstr, "../testfiles/failure/echo.failure.nontrimmedexpection.silk.md:18 - Data.body.status doesn't match"))
+	is.True(strings.Contains(logstr, "../testfiles/failure/echo.failure.nontrimmedexpectation.silk.md:18 - Data.body.status doesn't match"))
 }
 
 func TestData(t *testing.T) {
