@@ -44,3 +44,26 @@
 {"Accept-Encoding":"gzip","Content-Length":"16","User-Agent":"Go-http-client/1.1","X-Status":"awesome","body":{"st":"awesome"},"bodystr":"{\"st\":\"awesome\"}","method":"POST","path":"/echo/awesome","status":["awesome"]}
 
 ```
+
+## POST /echo/{$EnvStatus}
+
+* ?status={$EnvStatus}
+* X-Status: {$EnvStatus}
+
+```
+{"st":"{$EnvStatus}"}
+```
+
+===
+
+### Response
+
+* `Server`: `"EchoDataHandler"`
+* `Status`: `{value}`
+* `Data.body.st`: `"awesome"`
+* `Data.body.st`: {$EnvStatus}
+
+```
+{"Accept-Encoding":"gzip","Content-Length":"16","User-Agent":"Go-http-client/1.1","X-Status":"awesome","body":{"st":"awesome"},"bodystr":"{\"st\":\"awesome\"}","method":"POST","path":"/echo/awesome","status":["awesome"]}
+
+```
