@@ -318,11 +318,15 @@ func (r *Runner) assertBody(actual, expected []byte) bool {
 func (r *Runner) assertDetail(line *parse.Line, key string, actual interface{}, expected *parse.Value) bool {
 	if !expected.Equal(actual) {
 		actualVal := parse.ParseValue([]byte(fmt.Sprintf("%v", actual)))
+		actualString := actualVal.String()
+		if v, ok := actual.(string); ok {
+			actualString = fmt.Sprintf(`"%s"`, v)
+		}
 
 		if expected.Type() == actualVal.Type() {
-			r.log(key, fmt.Sprintf("expected: %s  actual: %s", expected, actualVal))
+			r.log(key, fmt.Sprintf("expected: %s  actual: %s", expected, actualString))
 		} else {
-			r.log(key, fmt.Sprintf("expected %s: %s  actual %T: %s", expected.Type(), expected, actual, actualVal))
+			r.log(key, fmt.Sprintf("expected %s: %s  actual %T: %s", expected.Type(), expected, actual, actualString))
 		}
 
 		return false
@@ -357,10 +361,14 @@ func (r *Runner) assertData(line *parse.Line, data interface{}, errData error, k
 	}
 	if !expected.Equal(actual) {
 		actualVal := parse.ParseValue([]byte(fmt.Sprintf("%v", actual)))
+		actualString := actualVal.String()
+		if v, ok := actual.(string); ok {
+			actualString = fmt.Sprintf(`"%s"`, v)
+		}
 		if expected.Type() == actualVal.Type() {
-			r.log(key, fmt.Sprintf("expected: %s  actual: %s", expected, actualVal))
+			r.log(key, fmt.Sprintf("expected: %s  actual: %s", expected, actualString))
 		} else {
-			r.log(key, fmt.Sprintf("expected %s: %s  actual %T: %s", expected.Type(), expected, actual, actualVal))
+			r.log(key, fmt.Sprintf("expected %s: %s  actual %T: %s", expected.Type(), expected, actual, actualString))
 		}
 		return false
 	}

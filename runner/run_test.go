@@ -78,6 +78,28 @@ func TestStandardSeparator(t *testing.T) {
 	is.False(subT.Failed())
 }
 
+// https://github.com/matryer/silk/issues/28
+func TestFailureNonTrimmedExpection(t *testing.T) {
+	is := is.New(t)
+	subT := &testT{}
+	s := httptest.NewServer(testutil.EchoDataHandler())
+	defer s.Close()
+	r := runner.New(subT, s.URL)
+	var logs []string
+	r.Log = func(s string) {
+		logs = append(logs, s)
+	}
+	g, err := parse.ParseFile("../testfiles/failure/echo.failure.nontrimmedexpectation.silk.md")
+	is.NoErr(err)
+	r.RunGroup(g...)
+	is.True(subT.Failed())
+	logstr := strings.Join(logs, "\n")
+
+	is.True(strings.Contains(logstr, `Data.body.status expected: "awesome"  actual: " awesome"`))
+	is.True(strings.Contains(logstr, "--- FAIL: GET /echo"))
+	is.True(strings.Contains(logstr, "../testfiles/failure/echo.failure.nontrimmedexpectation.silk.md:18 - Data.body.status doesn't match"))
+}
+
 func TestData(t *testing.T) {
 	is := is.New(t)
 	subT := &testT{}
