@@ -112,7 +112,7 @@ You may also specify response headers in the same format as request headers:
 
 If any of the headers do not match, the test will fail.
 
-#### Capturing data (BETA)
+#### Capturing data
 
 Silk allows you to capture values at the point of asserting them and reuse them in future requests and assertions. To capture a value, include a comment on the line that mentions a `{placeholder}`:
 
@@ -158,7 +158,7 @@ allowing for differences in whitespace and ordering as well as being lenient tow
 
     ```json
     {
-        "id": 1, 
+        "id": 1,
         "release_year": 2016,
         "name": "Silk"
     }
@@ -237,7 +237,7 @@ func TestAPIEndpoint(t *testing.T) {
   // start a server
   s := httptest.NewServer(yourHandler)
   defer s.Close()
-  
+
   // run all test files
   runner.New(t, s.URL).RunGlob(filepath.Glob("../testfiles/failure/*.silk.md"))
 }
