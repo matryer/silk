@@ -21,6 +21,8 @@ func isRegex(v interface{}) bool {
 	return strings.HasPrefix(s, `/`) && strings.HasSuffix(s, `/`)
 }
 
+// Value wraps any kind of data and provides helpers
+// for inspecting it.
 type Value struct {
 	Data interface{}
 }

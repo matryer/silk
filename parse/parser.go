@@ -18,6 +18,7 @@ var (
 	errMalformedDetail     = errors.New("malformed detail")
 )
 
+// Group represents a group of Requests.
 type Group struct {
 	Filename string
 	Title    []byte
@@ -25,6 +26,8 @@ type Group struct {
 	Details  Lines
 }
 
+// Request describes an HTTP request and a set of
+// associated assertions.
 type Request struct {
 	Path     []byte
 	Method   []byte
