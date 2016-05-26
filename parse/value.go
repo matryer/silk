@@ -56,6 +56,7 @@ func (v Value) Equal(val interface{}) bool {
 	return fmt.Sprintf("%v", v.Data) == fmt.Sprintf("%v", val)
 }
 
+// Type gets a string describing the type of this Value.
 func (v Value) Type() string {
 	var str string
 	var ok bool
@@ -68,6 +69,8 @@ func (v Value) Type() string {
 	return "string"
 }
 
+// ParseValue parses the specified bytes into a Value
+// using the encoding/json unmarshaller.
 func ParseValue(src []byte) *Value {
 	var v interface{}
 	src = clean(src)

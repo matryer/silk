@@ -38,6 +38,7 @@ type Request struct {
 	ExpectedDetails  Lines
 }
 
+// ErrLine describes an error at a specific line.
 type ErrLine struct {
 	N   int
 	Err error
@@ -47,6 +48,7 @@ func (e ErrLine) Error() string {
 	return fmt.Sprintf("%d: %v", e.N, e.Err)
 }
 
+// ParseFile parses the specified files.
 func ParseFile(files ...string) ([]*Group, error) {
 	var groups []*Group
 	for _, file := range files {
@@ -69,6 +71,7 @@ func ParseFile(files ...string) ([]*Group, error) {
 	return groups, nil
 }
 
+// Parse parses a file.
 func Parse(filename string, r io.Reader) ([]*Group, error) {
 
 	n := 0

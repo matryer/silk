@@ -8,6 +8,8 @@ import (
 	"regexp"
 )
 
+// Detail is a key/value pair used for parameters
+// and assertions.
 type Detail struct {
 	Key   string
 	Value *Value

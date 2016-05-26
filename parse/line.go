@@ -64,6 +64,7 @@ func (l *Line) String() string {
 	return fmt.Sprintf("%d: (%s) %s", l.Number, l.Type, string(l.Bytes))
 }
 
+// Detail gets the Detail from this Line.
 func (l *Line) Detail() *Detail {
 	return l.detail
 }
@@ -83,8 +84,10 @@ func (l *Line) Capture() string {
 	return string(matches[1])
 }
 
+// Lines represents many lines.
 type Lines []*Line
 
+// Bytes gets the joined bytes of all lines.
 func (l Lines) Bytes() []byte {
 	var lines [][]byte
 	for _, line := range l {
