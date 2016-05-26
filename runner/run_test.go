@@ -59,6 +59,7 @@ func TestCapturedVars(t *testing.T) {
 	subT := &testT{}
 	s := httptest.NewServer(testutil.EchoDataHandler())
 	defer s.Close()
+	os.Setenv("$EnvStatus", "awesome")
 	os.Setenv("$AppNameFromEnv", "Silk")
 	r := runner.New(subT, s.URL)
 	r.RunFile("../testfiles/success/captured-vars.silk.md")
