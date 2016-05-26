@@ -25,6 +25,11 @@ func EchoDataHandler() http.Handler {
 	return http.HandlerFunc(handleEchoData)
 }
 
+// EchoRawHandler gets an http.Handler that echos request's body only.
+func EchoRawHandler() http.Handler {
+	return http.HandlerFunc(handleEchoRaw)
+}
+
 func handleEcho(w http.ResponseWriter, r *http.Request) {
 	// set Server header
 	w.Header().Set("Server", "EchoHandler")
@@ -86,6 +91,21 @@ func handleEchoData(w http.ResponseWriter, r *http.Request) {
 	out["body"] = bodyData
 	if err := json.NewEncoder(w).Encode(out); err != nil {
 		panic(err)
+	}
+}
+
+func handleEchoRaw(w http.ResponseWriter, r *http.Request) {
+	// set Server header
+	w.Header().Set("Server", "EchoRawHandler")
+
+	// read body
+	var bodybuf bytes.Buffer
+	if _, err := io.Copy(&bodybuf, r.Body); err != nil {
+		log.Println("copying request into buffer failed:", err)
+	}
+	// write body
+	if _, err := io.Copy(w, &bodybuf); err != nil {
+		log.Println("copying request into response failed:", err)
 	}
 }
 

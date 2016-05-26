@@ -2,6 +2,7 @@ package runner
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -217,7 +218,31 @@ func (r *Runner) runRequest(group *parse.Group, req *parse.Request) {
 	if len(req.ExpectedBody) > 0 {
 		// check body against expected body
 		exp := r.resolveVars(req.ExpectedBody.String())
-		if !r.assertBody(actualBody, []byte(exp)) {
+
+		// depending on the expectedBodyType:
+		// json*: check if expectedBody as JSON is a subset of the actualBody as json
+		// json(exact): check JSON for deep equality (avoids checking diffs in white space and order)
+		// *: check string for verbatim equality
+
+		expectedTypeIsJSON := strings.HasPrefix(req.ExpectedBodyType, "json")
+		if expectedTypeIsJSON {
+			// decode json from string
+			var expectedJSON interface{}
+			var actualJSON interface{}
+			json.Unmarshal([]byte(exp), &expectedJSON)
+			json.Unmarshal(actualBody, &actualJSON)
+
+			if !strings.Contains(req.ExpectedBodyType, "exact") {
+				eq, err := r.assertJSONIsEqualOrSubset(expectedJSON, actualJSON)
+				if !eq {
+					r.fail(group, req, req.ExpectedBody.Number(), "- body doesn't match", err)
+					return
+				}
+			} else if !reflect.DeepEqual(actualJSON, expectedJSON) {
+				r.fail(group, req, req.ExpectedBody.Number(), "- body doesn't match")
+				return
+			}
+		} else if !r.assertBody(actualBody, []byte(exp)) {
 			r.fail(group, req, req.ExpectedBody.Number(), "- body doesn't match")
 			return
 		}
@@ -340,6 +365,45 @@ func (r *Runner) assertData(line *parse.Line, data interface{}, errData error, k
 		return false
 	}
 	return true
+}
+
+// assertJSONIsEqualOrSubset returns true if v1 and v2 are equal in value
+// or if both are maps (of type map[string]interface{}) and v1 is a subset of v2, where
+// all keys that are present in v1 are present with the same value in v2.
+func (r *Runner) assertJSONIsEqualOrSubset(v1 interface{}, v2 interface{}) (bool, error) {
+	if (v1 == nil) && (v2 == nil) {
+		return true, nil
+	}
+
+	// check if both are non nil and that type matches
+	if ((v1 == nil) != (v2 == nil)) ||
+		(reflect.ValueOf(v1).Type() != reflect.ValueOf(v2).Type()) {
+		return false, fmt.Errorf("types do not match")
+	}
+
+	switch v1.(type) {
+	case map[string]interface{}:
+		// recursively check maps
+		// v2 is of same type as v1 as check in early return
+		v2map := v2.(map[string]interface{})
+		for objK, objV := range v1.(map[string]interface{}) {
+			if v2map[objK] == nil {
+				return false, fmt.Errorf("missing key '%s'", objK)
+			}
+			equalForKey, errForKey := r.assertJSONIsEqualOrSubset(objV, v2map[objK])
+			if !equalForKey {
+				return false, fmt.Errorf("mismatch for key '%s': %s", objK, errForKey)
+			}
+		}
+
+		return true, nil
+	default:
+		// all non-map types must be deep equal
+		if !reflect.DeepEqual(v1, v2) {
+			return false, fmt.Errorf("values do not match - %s != %s", v1, v2)
+		}
+		return true, nil
+	}
 }
 
 func (r *Runner) capture(key string, val interface{}) {

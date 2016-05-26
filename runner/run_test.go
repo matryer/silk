@@ -160,7 +160,7 @@ func TestGlob(t *testing.T) {
 	defer s.Close()
 	r := runner.New(subT, s.URL)
 	r.Log = func(s string) {} // don't bother logging
-	r.RunGlob(filepath.Glob("../testfiles/failure/*.silk.md"))
+	r.RunGlob(filepath.Glob("../testfiles/failure/echo.*.silk.md"))
 	is.True(subT.Failed())
 }
 
@@ -210,6 +210,30 @@ func TestFailureFieldsDifferentTypes(t *testing.T) {
 	logstr := strings.Join(logs, "\n")
 
 	is.True(strings.Contains(logstr, `Status expected string: "400"  actual float64: 200`))
+}
+
+func TestRunJsonModesSuccess(t *testing.T) {
+	is := is.New(t)
+	subT := &testT{}
+	s := httptest.NewServer(testutil.EchoRawHandler())
+	defer s.Close()
+	r := runner.New(subT, s.URL)
+	g, err := parse.ParseFile("../testfiles/success/echoraw.success.jsonmodes.silk.md")
+	is.NoErr(err)
+	r.RunGroup(g...)
+	is.False(subT.Failed())
+}
+
+func TestRunJsonModesFailure(t *testing.T) {
+	is := is.New(t)
+	subT := &testT{}
+	s := httptest.NewServer(testutil.EchoRawHandler())
+	defer s.Close()
+	r := runner.New(subT, s.URL)
+	g, err := parse.ParseFile("../testfiles/failure/echoraw.failure.jsonmodes.silk.md")
+	is.NoErr(err)
+	r.RunGroup(g...)
+	is.True(subT.Failed())
 }
 
 type testT struct {
