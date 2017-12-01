@@ -395,9 +395,6 @@ func (r *Runner) assertJSONIsEqualOrSubset(v1 interface{}, v2 interface{}) (bool
 		// v2 is of same type as v1 as check in early return
 		v2map := v2.(map[string]interface{})
 		for objK, objV := range v1.(map[string]interface{}) {
-			if v2map[objK] == nil {
-				return false, fmt.Errorf("missing key '%s'", objK)
-			}
 			equalForKey, errForKey := r.assertJSONIsEqualOrSubset(objV, v2map[objK])
 			if !equalForKey {
 				return false, fmt.Errorf("mismatch for key '%s': %s", objK, errForKey)
