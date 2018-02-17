@@ -1,0 +1,20 @@
+hash: 7d86471695fec0cdbac4025390b8b7fdb814f4068f265eec987f1d1f4f6a402a
+updated: 2018-02-16T23:32:46.363838+07:00
+imports:
+- name: github.com/gorilla/context
+  version: 08b5f424b9271eedf6f9f0ce86cb9396ed337a42
+- name: github.com/gorilla/mux
+  version: 53c1911da2b537f792e7cafcb446b05ffe33b996
+- name: github.com/matryer/m
+  version: 7b88c198421605a9d72fa0d48dbff9df2619962a
+- name: github.com/matryer/silk
+  version: 720c541db50076a22077fbcf4a971c0f26a6adf3
+  subpackages:
+  - examples/failure
+  - examples/success
+  - parse
+  - runner
+  - testutil
+testImports:
+- name: github.com/cheekybits/is
+  version: 68e9c0620927fb5427fda3708222d0edee89eae9

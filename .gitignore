@@ -26,3 +26,6 @@ _testmain.go
 build/release/
 
 silk
+
+# glide
+vendor/
