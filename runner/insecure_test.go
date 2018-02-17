@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/cheekybits/is"
-	"github.com/matryer/silk/testutil"
+	"github.com/juacompe/silk/testutil"
 )
 
 func TestAllowConnectionsToSSLSitesWithoutCerts(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/matryer/silk/runner"
+	"github.com/juacompe/silk/runner"
 )
 
 var (
