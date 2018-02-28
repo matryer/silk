@@ -1,0 +1,12 @@
+package: github.com/juacompe/silk
+import:
+- package: github.com/gorilla/mux
+  version: ^1.6.1
+- package: github.com/matryer/m
+- package: github.com/matryer/silk
+  version: ^0.5.1
+  subpackages:
+  - parse
+  - runner
+testImport:
+- package: github.com/cheekybits/is

@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/matryer/silk/runner"
+	"github.com/juacompe/silk/runner"
 )
 
 var (
 	showVersion = flag.Bool("version", false, "show version and exit")
+	insecure    = flag.Bool("insecure", false, "allow connections to SSL sites without certs")
 	url         = flag.String("silk.url", "", "(required) target url")
 	help        = flag.Bool("help", false, "show help")
 	paths       []string
@@ -38,6 +39,9 @@ func main() {
 
 func testFunc(t *testing.T) {
 	r := runner.New(t, *url)
+	if *insecure {
+		r.AllowConnectionsToSSLSitesWithoutCerts()
+	}
 	fmt.Println("silk: running", len(paths), "file(s)...")
 	r.RunGlob(paths, nil)
 }

@@ -2,6 +2,7 @@ package runner_test
 
 import (
 	"fmt"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"path/filepath"
@@ -9,9 +10,9 @@ import (
 	"testing"
 
 	"github.com/cheekybits/is"
+	"github.com/juacompe/silk/testutil"
 	"github.com/matryer/silk/parse"
 	"github.com/matryer/silk/runner"
-	"github.com/matryer/silk/testutil"
 )
 
 func TestTInter(t *testing.T) {
@@ -19,13 +20,9 @@ func TestTInter(t *testing.T) {
 	tt = &testing.T{}
 	_ = tt
 }
-
 func TestRunGroupSuccess(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoHandler())
+	is, r, subT, s := setupTest(t)
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	g, err := parse.ParseFile("../testfiles/success/echo.success.silk.md")
 	is.NoErr(err)
 	r.RunGroup(g...)
@@ -33,22 +30,16 @@ func TestRunGroupSuccess(t *testing.T) {
 }
 
 func TestRunFileSuccess(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoHandler())
+	is, r, subT, s := setupTest(t)
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	r.RunFile("../testfiles/success/echo.success.silk.md")
 	is.False(subT.Failed())
 }
 
 // https://github.com/matryer/silk/issues/31
 func TestIssue31(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoHandler())
+	is, r, subT, s := setupTest(t)
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	r.RunFile("../testfiles/success/issue-31.silk.md")
 	is.False(subT.Failed())
 }
@@ -80,11 +71,8 @@ func TestStandardSeparator(t *testing.T) {
 
 // https://github.com/matryer/silk/issues/28
 func TestFailureNonTrimmedExpection(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoDataHandler())
+	is, r, subT, s := setupTestWith(t, testutil.EchoDataHandler())
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	var logs []string
 	r.Log = func(s string) {
 		logs = append(logs, s)
@@ -101,41 +89,29 @@ func TestFailureNonTrimmedExpection(t *testing.T) {
 }
 
 func TestData(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoDataHandler())
+	is, r, subT, s := setupTestWith(t, testutil.EchoDataHandler())
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	r.RunFile("../testfiles/success/data.silk.md")
 	is.False(subT.Failed())
 }
 
 func TestBodyField(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoDataHandler())
+	is, r, subT, s := setupTestWith(t, testutil.EchoDataHandler())
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	r.RunFile("../testfiles/success/body-as-field.silk.md")
 	is.False(subT.Failed())
 }
 
 func TestRunFileSuccessNoBody(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoHandler())
+	is, r, subT, s := setupTest(t)
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	r.RunFile("../testfiles/success/echo.nobody.success.silk.md")
 	is.False(subT.Failed())
 }
 
 func TestFailureWrongBody(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoHandler())
+	is, r, subT, s := setupTest(t)
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	var logs []string
 	r.Log = func(s string) {
 		logs = append(logs, s)
@@ -156,11 +132,8 @@ func TestFailureWrongBody(t *testing.T) {
 }
 
 func TestFailureWrongHeader(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoHandler())
+	is, r, subT, s := setupTest(t)
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	var logs []string
 	r.Log = func(s string) {
 		logs = append(logs, s)
@@ -177,32 +150,23 @@ func TestFailureWrongHeader(t *testing.T) {
 }
 
 func TestGlob(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoHandler())
+	is, r, subT, s := setupTest(t)
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	r.Log = func(s string) {} // don't bother logging
 	r.RunGlob(filepath.Glob("../testfiles/failure/echo.*.silk.md"))
 	is.True(subT.Failed())
 }
 
 func TestCookies(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoHandler())
+	is, r, subT, s := setupTest(t)
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	r.RunFile("../testfiles/success/cookies.silk.md")
 	is.False(subT.Failed())
 }
 
 func TestFailureFieldsSameType(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoHandler())
+	is, r, subT, s := setupTest(t)
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	var logs []string
 	r.Log = func(s string) {
 		logs = append(logs, s)
@@ -217,11 +181,8 @@ func TestFailureFieldsSameType(t *testing.T) {
 }
 
 func TestFailureFieldsDifferentTypes(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoHandler())
+	is, r, subT, s := setupTest(t)
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	var logs []string
 	r.Log = func(s string) {
 		logs = append(logs, s)
@@ -236,11 +197,8 @@ func TestFailureFieldsDifferentTypes(t *testing.T) {
 }
 
 func TestRunJsonModesSuccess(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoRawHandler())
+	is, r, subT, s := setupTestWith(t, testutil.EchoRawHandler())
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	g, err := parse.ParseFile("../testfiles/success/echoraw.success.jsonmodes.silk.md")
 	is.NoErr(err)
 	r.RunGroup(g...)
@@ -248,15 +206,24 @@ func TestRunJsonModesSuccess(t *testing.T) {
 }
 
 func TestRunJsonModesFailure(t *testing.T) {
-	is := is.New(t)
-	subT := &testT{}
-	s := httptest.NewServer(testutil.EchoRawHandler())
+	is, r, subT, s := setupTestWith(t, testutil.EchoRawHandler())
 	defer s.Close()
-	r := runner.New(subT, s.URL)
 	g, err := parse.ParseFile("../testfiles/failure/echoraw.failure.jsonmodes.silk.md")
 	is.NoErr(err)
 	r.RunGroup(g...)
 	is.True(subT.Failed())
+}
+
+func setupTest(t *testing.T) (i is.I, r *runner.Runner, subT *testT, s *httptest.Server) {
+	return setupTestWith(t, testutil.EchoHandler())
+}
+
+func setupTestWith(t *testing.T, h http.Handler) (i is.I, r *runner.Runner, subT *testT, s *httptest.Server) {
+	i = is.New(t)
+	subT = &testT{}
+	s = httptest.NewServer(h)
+	r = runner.New(subT, s.URL)
+	return i, r, subT, s
 }
 
 type testT struct {
